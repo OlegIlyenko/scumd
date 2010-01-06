@@ -9,3 +9,7 @@ nohup.out
 testoutput/*
 testoutput
 TEST-*
+.idea
+*.iml
+*.ipr
+*.iws
