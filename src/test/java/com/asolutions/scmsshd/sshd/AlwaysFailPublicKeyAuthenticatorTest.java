@@ -21,7 +21,7 @@ public class AlwaysFailPublicKeyAuthenticatorTest extends MockTestCase{
 		}});
 		
 		AlwaysFailPublicKeyAuthenticator auth = new AlwaysFailPublicKeyAuthenticator();
-		assertFalse(auth.hasKey("username", mockPublicKey, mockSession));
+		assertFalse(auth.authenticate("username", mockPublicKey, mockSession));
 	}
 	
 }

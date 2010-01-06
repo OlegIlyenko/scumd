@@ -64,7 +64,7 @@ public class MainNoAuth {
 
 	private static void setupAuthenticators(SshServer sshd) {
 		sshd.setPasswordAuthenticator(new PasswordAuthenticator(){
-			public Object authenticate(String username, String password, ServerSession session) {
+			public boolean authenticate(String username, String password, ServerSession session) {
 				return true;
 			}
 		});

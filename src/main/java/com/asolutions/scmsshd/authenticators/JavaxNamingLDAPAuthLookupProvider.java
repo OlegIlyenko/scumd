@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.security.auth.login.LoginContext;
 
@@ -20,7 +21,7 @@ public class JavaxNamingLDAPAuthLookupProvider implements
 		ILDAPAuthLookupProvider {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
-	public Object provide(String url, String username, String password,
+	public SearchResult provide(String url, String username, String password,
 			boolean promiscuous) throws NamingException {
 		InitialDirContext context = new InitialDirContext(getProperties(url, username, password, promiscuous));
 		
@@ -34,7 +35,7 @@ public class JavaxNamingLDAPAuthLookupProvider implements
 		//initialize counter to total the results
 
 		// Search for objects using the filter
-		NamingEnumeration answer = context.search(username, searchFilter, searchCtls);
+		NamingEnumeration<SearchResult> answer = context.search(username, searchFilter, searchCtls);
 		return (answer.next());
 	}
 	

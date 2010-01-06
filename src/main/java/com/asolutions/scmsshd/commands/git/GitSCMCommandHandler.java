@@ -4,12 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.apache.sshd.server.CommandFactory.ExitCallback;
-
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
 import com.asolutions.scmsshd.exceptions.MustHaveWritePrivilagesToPushFailure;
+import org.apache.sshd.server.ExitCallback;
 
 public class GitSCMCommandHandler implements ISCMCommandHandler {
 	

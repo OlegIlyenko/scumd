@@ -7,8 +7,8 @@ import org.apache.sshd.server.session.ServerSession;
 
 public class AlwaysFailPublicKeyAuthenticator implements PublickeyAuthenticator {
 
-	public boolean hasKey(String username, PublicKey key, ServerSession session) {
-		return false;
-	}
-
+    @Override
+    public boolean authenticate(String username, PublicKey key, ServerSession session) {
+        return false;
+    }
 }

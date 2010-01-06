@@ -1,7 +1,7 @@
 package com.asolutions.scmsshd.commands.git;
 
-import org.spearce.jgit.lib.Repository;
-import org.spearce.jgit.transport.ReceivePack;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.ReceivePack;
 
 public class GitReceivePackProvider {
 

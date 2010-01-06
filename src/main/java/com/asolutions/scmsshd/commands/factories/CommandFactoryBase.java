@@ -2,6 +2,7 @@ package com.asolutions.scmsshd.commands.factories;
 
 import java.util.Properties;
 
+import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.apache.sshd.server.CommandFactory.ExitCallback;
+import org.apache.sshd.server.ExitCallback;
 import org.jmock.Expectations;
 import org.junit.Test;
 

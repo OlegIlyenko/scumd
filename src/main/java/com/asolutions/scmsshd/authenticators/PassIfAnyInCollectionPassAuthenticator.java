@@ -9,14 +9,14 @@ public class PassIfAnyInCollectionPassAuthenticator implements
 
 	private ArrayList<IPasswordAuthenticator> authList = new ArrayList<IPasswordAuthenticator>();
 
-	public Object authenticate(String username, String password, ServerSession session) {
+	public boolean authenticate(String username, String password, ServerSession session) {
 		for (IPasswordAuthenticator auth : authList) {
-			final Object authResult = auth.authenticate(username, password, session);
-			if (authResult != null){
-				return authResult;
+			final boolean authResult = auth.authenticate(username, password, session);
+			if (authResult){
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 
 	public void setAuthenticators(ArrayList authList) {

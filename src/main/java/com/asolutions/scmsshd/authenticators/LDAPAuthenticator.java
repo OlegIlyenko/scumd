@@ -1,6 +1,7 @@
 package com.asolutions.scmsshd.authenticators;
 
 import javax.naming.NamingException;
+import javax.naming.directory.SearchResult;
 
 import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
@@ -28,13 +29,14 @@ public class LDAPAuthenticator implements IPasswordAuthenticator {
 		this.provider = provider;
 	}
 
-	public Object authenticate(String username, String password, ServerSession session) {
+	public boolean authenticate(String username, String password, ServerSession session) {
 		username = "cn=" + username + "," + userBase;
 		try {
-			return provider.provide(url, username, password, promiscuous);
+            final SearchResult searchResult = provider.provide(url, username, password, promiscuous);
+            return searchResult != null;
 		} catch (NamingException e) {
 			log.error("Error Authenticating", e);
-			return null;
+			return false;
 		}
 	}
 

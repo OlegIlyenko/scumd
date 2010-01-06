@@ -21,8 +21,8 @@ public class AlwaysPassPublicKeyAuthenticatorTest extends MockTestCase{
 		}});
 		
 		AlwaysPassPublicKeyAuthenticator auth = new AlwaysPassPublicKeyAuthenticator();
-		assertTrue(auth.hasKey("username", mockPublicKey, mockSession));
-		assertTrue(auth.hasKey("username2", mockPublicKey, mockSession));
+		assertTrue(auth.authenticate("username", mockPublicKey, mockSession));
+		assertTrue(auth.authenticate("username2", mockPublicKey, mockSession));
 	}
 	
 }

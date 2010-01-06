@@ -6,14 +6,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import java.util.logging.Level;
-import org.apache.sshd.server.CommandFactory.Command;
-import org.apache.sshd.server.CommandFactory.ExitCallback;
-import org.apache.sshd.server.CommandFactory.SessionAware;
+import org.apache.sshd.server.Command;
+import org.apache.sshd.server.Environment;
+import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
 import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spearce.jgit.lib.Repository;
-import org.spearce.jgit.transport.UploadPack;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.UploadPack;
 
 public class SCMCommand implements Command, SessionAware {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -104,4 +105,12 @@ public class SCMCommand implements Command, SessionAware {
 		this.session = session;
 	}
 
+    @Override
+    public void start(Environment env) throws IOException {
+        start();
+    }
+
+    @Override
+    public void destroy() {
+    }
 }

@@ -1,4 +1,5 @@
 package com.asolutions.scmsshd.sshd;
+import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

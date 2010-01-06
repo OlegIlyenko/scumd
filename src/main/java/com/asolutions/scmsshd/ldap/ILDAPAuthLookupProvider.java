@@ -1,9 +1,10 @@
 package com.asolutions.scmsshd.ldap;
 
 import javax.naming.NamingException;
+import javax.naming.directory.SearchResult;
 
 public interface ILDAPAuthLookupProvider {
 
-	Object provide(String url, String username, String password, boolean promiscuous) throws NamingException;
+	SearchResult provide(String url, String username, String password, boolean promiscuous) throws NamingException;
 
 }

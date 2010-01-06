@@ -3,6 +3,7 @@ package com.asolutions.scmsshd;
 import java.util.Arrays;
 
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.Channel;
 import org.apache.sshd.common.Cipher;
 import org.apache.sshd.common.Compression;
 import org.apache.sshd.common.KeyExchange;
@@ -25,7 +26,6 @@ import org.apache.sshd.common.random.SingletonRandomFactory;
 import org.apache.sshd.common.signature.SignatureDSA;
 import org.apache.sshd.common.signature.SignatureRSA;
 import org.apache.sshd.common.util.SecurityUtils;
-import org.apache.sshd.server.ServerChannel;
 import org.apache.sshd.server.UserAuth;
 import org.apache.sshd.server.auth.UserAuthPassword;
 import org.apache.sshd.server.auth.UserAuthPublicKey;
@@ -72,7 +72,7 @@ public class SCuMD extends SshServer {
 														  new HMACMD596.Factory(), 
 														  new HMACSHA196.Factory()));
 
-        setChannelFactories(Arrays.<NamedFactory<ServerChannel>>asList(
+        setChannelFactories(Arrays.<NamedFactory<Channel>>asList(
                 new ChannelSession.Factory()));
 		setSignatureFactories(Arrays.<NamedFactory<Signature>> asList(new SignatureDSA.Factory(), new SignatureRSA.Factory()));
 	}

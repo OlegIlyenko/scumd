@@ -3,7 +3,7 @@ package com.asolutions.scmsshd.commands.git;
 import java.util.Properties;
 
 import org.junit.Test;
-import org.spearce.jgit.util.QuotedString.GitPathStyle;
+import org.eclipse.jgit.util.QuotedString.GitPathStyle;
 
 import static org.junit.Assert.*;
 

@@ -2,7 +2,7 @@ package com.asolutions.scmsshd.commands.factories;
 
 import java.util.Properties;
 
-import org.apache.sshd.server.CommandFactory.Command;
+import org.apache.sshd.server.Command;
 
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;

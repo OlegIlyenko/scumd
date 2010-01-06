@@ -5,9 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import org.apache.sshd.server.CommandFactory.Command;
-import org.apache.sshd.server.CommandFactory.ExitCallback;
-import org.apache.sshd.server.CommandFactory.SessionAware;
+import org.apache.sshd.server.Command;
+import org.apache.sshd.server.Environment;
+import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.SessionAware;
 import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,4 +162,12 @@ public class SCMCommand implements Command, SessionAware{
 		return configuration;
 	}
 
+    @Override
+    public void start(Environment environment) throws IOException {
+        start();
+    }
+
+    @Override
+    public void destroy() {
+    }
 }
