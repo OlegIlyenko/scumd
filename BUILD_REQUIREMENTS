@@ -1,16 +1,39 @@
----------------
-You need:
----------------
 
-Java SDK 6
-http://java.sun.com/
-
-Maven 2.2.1
-http://maven.apache.org/
+            == SCuMD Build Requirements ==
 
 
----------------
-Build:
----------------
+            === You need ===
 
-mvn install
+- Java SDK 6
+  http://java.sun.com/
+
+- Maven 2.2.1
+  http://maven.apache.org/
+
+
+            === Build + unit tests + integration tests ===
+
+  mvn install
+
+
+            === Run with no auth ===
+
+  mvn exec:java -Dexec.args=noauth.xml
+
+
+            === IDE Setup ===
+
+  Because this projet is configured with Maven, all major IDE's can create
+  their own project configurations and download dependency jars based on
+  it.
+
+- Eclipse
+  - Make sure the m2eclipse plugin is installed: http://m2eclipse.sonatype.org
+  - Import this project as a Maven project.
+
+- Netbeans
+  - Make sure Netbean's Maven plugin is installed.
+  - Choose to "Open project", then choose this project's directory/pom.xml.
+
+- IDEA
+  - Choose to "Open project", then choose this project's pom.xml.
