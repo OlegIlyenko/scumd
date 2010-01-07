@@ -117,6 +117,22 @@
                     </arguments>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.dstovall</groupId>
+                <artifactId>onejar-maven-plugin</artifactId>
+                <version>1.4.1</version>
+                <configuration>
+                    <mainClass>com.asolutions.scmsshd.SCuMD</mainClass>
+                    <filename>${project.build.finalName}-standalone.jar</filename>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>one-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -126,5 +142,12 @@
             <url>http://people.apache.org/~struberg/staging-repo</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>onejar-maven-plugin.googlecode.com</id>
+            <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>

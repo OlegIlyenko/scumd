@@ -15,10 +15,17 @@
 
   mvn install
 
+  This will create an executable jar in the target directory:
+  target/scumd-*-standalone.jar
+
 
             === Run with no auth ===
 
+  During development:
   mvn exec:java -Dexec.args=noauth.xml
+
+  In production:
+  java -jar target/scumd-*-standalone.jar noauth.xml
 
 
             === IDE Setup ===
