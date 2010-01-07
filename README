@@ -51,6 +51,11 @@ quite simple to add. If anyone is interested, please contact me
   Post question, comments or patches to the git@vger.kernel.org mailing list
   with the [SCuMD] tag in the subject.
 
+            == Building                        ==
+
+  See BUILD_REQUIREMENTS in this directory. It also says how you should set up
+  the project in Eclipse, Netbeans and IDEA.
+
             == Contributing                    ==
 
   See SUBMITTING_PATCHES in this directory. However, feedback and bug reports
