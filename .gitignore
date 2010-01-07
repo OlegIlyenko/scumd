@@ -15,3 +15,5 @@ TEST-*
 *.iws
 nbproject
 .settings
+.project
+.classpath
