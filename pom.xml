@@ -12,6 +12,10 @@
         <project.source.encoding>UTF-8</project.source.encoding>
     </properties>
 
+    <prerequisites>
+        <maven>2.2.1</maven>
+    </prerequisites>
+
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -1,0 +1,16 @@
+---------------
+You need:
+---------------
+
+Java SDK 6
+http://java.sun.com/
+
+Maven 2.2.1
+http://maven.apache.org/
+
+
+---------------
+Build:
+---------------
+
+mvn install
