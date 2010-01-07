@@ -1,5 +1,6 @@
 package com.asolutions.scmsshd.authenticators;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -20,7 +21,7 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 	@Test
 	public void testFailsWithNothingInChain() throws Exception {
 		final ServerSession mockServerSession = context.mock(ServerSession.class);
-		assertNull(new PassIfAnyInCollectionPassAuthenticator().authenticate(USERNAME, PASSWORD, mockServerSession));
+		assertFalse(new PassIfAnyInCollectionPassAuthenticator().authenticate(USERNAME, PASSWORD, mockServerSession));
 	}
 	
 	@Test
@@ -32,7 +33,7 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 		
 		checking(new Expectations(){{
 			allowing(failsAuth).authenticate(USERNAME, PASSWORD, mockServerSession);
-			will(returnValue(null));
+			will(returnValue(false));
 			allowing(passesAuth).authenticate(USERNAME, PASSWORD, mockServerSession);
 			will(returnValue(true));
 		}});
@@ -53,7 +54,7 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 		
 		checking(new Expectations(){{
 			allowing(failsAuth).authenticate(USERNAME, PASSWORD, mockServerSession);
-			will(returnValue(null));
+			will(returnValue(false));
 		}});
 		
 		PassIfAnyInCollectionPassAuthenticator auth = new PassIfAnyInCollectionPassAuthenticator();
@@ -61,7 +62,7 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 		authList.add(failsAuth);
 		authList.add(failsAuth);
 		auth.setAuthenticators(authList);
-		assertNull(auth.authenticate(USERNAME, PASSWORD, mockServerSession));
+		assertFalse(auth.authenticate(USERNAME, PASSWORD, mockServerSession));
 	}
 
 }

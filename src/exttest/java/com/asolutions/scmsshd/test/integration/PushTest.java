@@ -13,10 +13,10 @@ import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.spearce.jgit.lib.Ref;
-import org.spearce.jgit.lib.Repository;
-import org.spearce.jgit.lib.TextProgressMonitor;
-import org.spearce.jgit.transport.FetchResult;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.transport.FetchResult;
 
 import com.asolutions.scmsshd.SCuMD;
 import com.asolutions.scmsshd.authenticators.AlwaysPassPublicKeyAuthenticator;

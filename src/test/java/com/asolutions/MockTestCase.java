@@ -7,7 +7,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 
-public class MockTestCase {
+public abstract class MockTestCase {
 
 	protected Mockery context = new JUnit4Mockery();
 

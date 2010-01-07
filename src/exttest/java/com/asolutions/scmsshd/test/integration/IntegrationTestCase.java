@@ -1,8 +1,8 @@
 package com.asolutions.scmsshd.test.integration;
 
-import static org.spearce.jgit.lib.Constants.R_HEADS;
-import static org.spearce.jgit.lib.Constants.R_REMOTES;
-import static org.spearce.jgit.lib.Constants.R_TAGS;
+import static org.eclipse.jgit.lib.Constants.R_HEADS;
+import static org.eclipse.jgit.lib.Constants.R_REMOTES;
+import static org.eclipse.jgit.lib.Constants.R_TAGS;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,24 +15,24 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.spearce.jgit.errors.NotSupportedException;
-import org.spearce.jgit.errors.TransportException;
-import org.spearce.jgit.lib.Constants;
-import org.spearce.jgit.lib.NullProgressMonitor;
-import org.spearce.jgit.lib.ObjectId;
-import org.spearce.jgit.lib.Ref;
-import org.spearce.jgit.lib.RefUpdate;
-import org.spearce.jgit.lib.Repository;
-import org.spearce.jgit.transport.FetchResult;
-import org.spearce.jgit.transport.PushResult;
-import org.spearce.jgit.transport.RefSpec;
-import org.spearce.jgit.transport.RemoteConfig;
-import org.spearce.jgit.transport.RemoteRefUpdate;
-import org.spearce.jgit.transport.SshSessionFactory;
-import org.spearce.jgit.transport.TrackingRefUpdate;
-import org.spearce.jgit.transport.Transport;
-import org.spearce.jgit.transport.URIish;
-import org.spearce.jgit.transport.RemoteRefUpdate.Status;
+import org.eclipse.jgit.errors.NotSupportedException;
+import org.eclipse.jgit.errors.TransportException;
+import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.NullProgressMonitor;
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.lib.RefUpdate;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.FetchResult;
+import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RefSpec;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.transport.TrackingRefUpdate;
+import org.eclipse.jgit.transport.Transport;
+import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.RemoteRefUpdate.Status;
 
 import com.asolutions.scmsshd.test.integration.util.TestSSHSessionFactory;
 

@@ -8,9 +8,9 @@ import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.spearce.jgit.transport.OpenSshConfig;
-import org.spearce.jgit.transport.SshSessionFactory;
-import org.spearce.jgit.util.FS;
+import org.eclipse.jgit.transport.OpenSshConfig;
+import org.eclipse.jgit.transport.SshSessionFactory;
+import org.eclipse.jgit.util.FS;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
