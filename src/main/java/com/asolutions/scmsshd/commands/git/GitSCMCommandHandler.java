@@ -1,14 +1,13 @@
 package com.asolutions.scmsshd.commands.git;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
-import com.asolutions.scmsshd.exceptions.MustHaveWritePrivilagesToPushFailure;
 import org.apache.sshd.server.ExitCallback;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class GitSCMCommandHandler implements ISCMCommandHandler {
 	
@@ -17,6 +16,10 @@ public class GitSCMCommandHandler implements ISCMCommandHandler {
 
 	public GitSCMCommandHandler() {
 		this(new GitUploadPackSCMCommandHandler(), new GitReceivePackSCMCommandHandler());
+	}
+
+    public GitSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
+		this(new GitUploadPackSCMCommandHandler(repositoryProvider), new GitReceivePackSCMCommandHandler(repositoryProvider));
 	}
 
 	public GitSCMCommandHandler(ISCMCommandHandler uploadPackHandler,

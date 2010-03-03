@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://asolutions.com/schema/spring/scumd" xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://asolutions.com/schema/spring/scumd http://asolutions.com/schema/spring/scumd/scumd-0.1.0.xsd">
+
+    <!--
+        Git SSH server. You can configure most of the properties here.
+        You can also define more than one server within configuration.
+
+        You can define ACL, server key pair and all other dependencies within <git-ssh-server /> tag or provide
+        them as references through attributes.
+    -->
+    <git-ssh-server port="1122" repositories-base="${gitRepos}">
+        <default-server-key-pair />
+    </git-ssh-server>
+
+    <!--
+        Access Control List (ACL) for the repositories
+    -->
+    <acl>
+        <!--
+            Example of the ACL.
+            Path is comma separated list of ANT-like paths.
+            Available privileges are:
+              * ReadWrite
+              * ReadOnly
+              * Create - in this case new bare repository would be created during 'clone' or 'push' operations (if it does not exist).
+        -->
+        <!--
+        <repository path="**/*.git">
+            <groups allow="ReadWrite, Create" list="developers, generic-group-1" />
+            <users allow="ReadWrite">user1, user2"</users>
+        </repository>
+
+        <repository path="public/*.git, public-*.git">
+            <groups allow="ReadOnly" list="public" />
+        </repository>
+        -->
+    </acl>
+
+    <!-- User DAO. At the moment anly simple implementation available. It can be defined like this (or, of course, within git server tag). -->
+    <simple-user-dao>
+
+        <!-- you can nest users within groups -->
+        <group name="public">
+            <!-- password in user tag is raw text (not checksum) -->
+            <!--
+            <user name="user1" password="hello" active="false" expire="2011-01-01" />
+            -->
+
+            <!--
+            <user name="user2">
+                <password password="hello" />
+            </user>
+            -->
+
+            <!-- you can also provide password checksum (none, md5 and sha1 are supported) -->
+            <!--
+            <user name="user3">
+                <password password="5d41402abc4b2a76b9719d911017c592" checksum="md5" />
+            </user>
+            -->
+        </group>
+
+        <group name="developers">
+            <!-- You can also user public key auth for some users -->
+            <!--
+            <user name="user4">
+                <public-key file="/path/to/the/id_rsa.pub" />
+            </user>
+            -->
+
+            <!--
+            <user name="user5">
+                <public-key file="/path/to/another/key" />
+            </user>
+            -->
+        </group>
+
+        <group name="generic-group-1" />
+
+        <!-- Group list can be also provided through attribute and public kay can be inline -->
+        <!--
+        <user name="user6" groups="generic-group-1, public">
+            <public-key>
+                ssh-rsa BASE56OFTHEPUBLICKEY==
+            </public-key>
+        </user>
+        -->
+
+    </simple-user-dao>
+
+    <!-- You can also load server key pair from file -->
+    <!--
+    <file-server-key-pair>
+        <key-file path="/path/to/the/ssh_host_rsa_key" />
+        <key-file path="/path/to/the/ssh_host_dsa_key" />
+    </file-server-key-pair>
+    -->
+
+    <!-- Inline server key pair also supported -->
+    <!--
+    <simple-server-key-pair>
+        <key>
+            BEGIN RSA PRIVATE KEY
+            MIIEogIBAAKCAQEAuS6dFpfIZF1281yWRiv...
+            END RSA PRIVATE KEY
+        </key>
+        <key>
+            BEGIN DSA PRIVATE KEY
+            MIIBuwIBAAKBgQDldv2+YEVfSm2nbdS8ZF2r5...
+            END DSA PRIVATE KEY
+        </key>
+    </simple-server-key-pair>
+    -->
+
+</beans:beans>

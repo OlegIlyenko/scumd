@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<xsd:schema xmlns="http://asolutions.com/schema/spring/scumd"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            xmlns:tool="http://www.springframework.org/schema/tool"
+
+            targetNamespace="http://asolutions.com/schema/spring/scumd"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.springframework.org/schema/beans"
+                schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"/>
+    <xsd:import namespace="http://www.springframework.org/schema/tool"
+                schemaLocation="http://www.springframework.org/schema/tool/spring-tool-2.0.xsd"/>
+
+    <xsd:element name="git-ssh-server">
+        <xsd:annotation>
+            <xsd:documentation source="java:com.asolutions.scmsshd.ConfigurableGitSshServer">
+                Creates default Git SSH Server
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="com.asolutions.scmsshd.ConfigurableGitSshServer"/>
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="beans:identifiedType">
+                    <xsd:sequence>
+                        <xsd:element name="simple-user-dao" type="SimpleUserDao" minOccurs="0" />
+                        <xsd:element name="acl" type="RepositoryAcl" minOccurs="0" />
+                        <xsd:element name="default-server-key-pair" type="DefaultKeyPairProvider" minOccurs="0" />
+                        <xsd:element name="file-server-key-pair" type="FileKeyPairProvider" minOccurs="0" />
+                        <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" minOccurs="0" />
+                    </xsd:sequence>
+
+                    <xsd:attribute name="port" type="xsd:integer" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>SSH Server Port</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
+                    <xsd:attribute name="repositories-base" type="xsd:string" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>Base directory of the Git repositories</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
+                    <xsd:attribute name="user-dao-ref" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>Reference to the UserDao</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
+                    <xsd:attribute name="acl-ref" type="xsd:string" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>Reference to the Repository Access Control List (ACL)</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="simple-user-dao" type="SimpleUserDao"/>
+
+    <xsd:element name="acl" type="RepositoryAcl"/>
+
+    <xsd:element name="file-server-key-pair" type="FileKeyPairProvider"/>
+
+    <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" />
+
+    <!-- Type definition -->
+
+    <xsd:complexType name="SimpleUserDao">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="user" type="User" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Group">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="user" type="User" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="User">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="0">
+                    <xsd:element name="password">
+                        <xsd:complexType>
+                            <xsd:attribute name="password" type="xsd:string" use="required" />
+                            <xsd:attribute name="checksum" type="PasswordChecksum" default="none" />
+                        </xsd:complexType>
+                    </xsd:element>
+
+                    <xsd:element name="public-key">
+                        <xsd:complexType mixed="true">
+                            <xsd:attribute name="file" type="xsd:string" use="optional" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+                <xsd:attribute name="name" type="xsd:string" use="required" />
+                <xsd:attribute name="password" type="xsd:string" />
+                <xsd:attribute name="expire" type="xsd:date" />
+                <xsd:attribute name="active" type="xsd:boolean" default="true" />
+                <xsd:attribute name="groups" type="xsd:string" />
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RepositoryAcl">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+                    <xsd:element name="repository" type="Repository" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="Repository">
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="users" type="RepositoryIdentityAcl" />
+            <xsd:element name="groups" type="RepositoryIdentityAcl" />
+        </xsd:choice>
+        
+        <xsd:attribute name="path" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>Repository path pattern list. Patterns is similar to the ANT path. You can use * and ** wildcards.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="RepositoryIdentityAcl" mixed="true">
+        <xsd:attribute name="allow">
+            <xsd:annotation>
+                <xsd:documentation>List of permissions. Can be: ReadWrite, ReadOnly, Create</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="list">
+            <xsd:annotation>
+                <xsd:documentation>List of users or groups (depending on the enclosing tag).</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="DefaultKeyPairProvider" />
+
+    <xsd:complexType name="FileKeyPairProvider">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="key-file" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:attribute name="path" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="SimpleKeyPairProvider">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:sequence>
+                    <xsd:element name="key" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="PasswordChecksum">
+		<xsd:restriction base="xsd:NMTOKEN">
+            <xsd:enumeration value="none" />
+            <xsd:enumeration value="md5" />
+            <xsd:enumeration value="sha1" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>

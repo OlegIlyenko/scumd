@@ -1,21 +1,20 @@
 package com.asolutions.scmsshd.commands.git;
 
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
+import com.asolutions.scmsshd.exceptions.MustHaveWritePrivilagesToPushFailure;
+import org.apache.sshd.server.ExitCallback;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.ReceivePack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-
-import org.apache.sshd.server.ExitCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.ReceivePack;
-
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
-import com.asolutions.scmsshd.exceptions.MustHaveWritePrivilagesToPushFailure;
 
 public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -26,6 +25,11 @@ public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
 	public GitReceivePackSCMCommandHandler() {
 		this(new GitSCMRepositoryProvider(), new GitReceivePackProvider());
 	}
+
+    public GitReceivePackSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
+        this(repositoryProvider != null ? repositoryProvider : new GitSCMRepositoryProvider(),
+                new GitReceivePackProvider());
+    }
 
 	public GitReceivePackSCMCommandHandler(
 			GitSCMRepositoryProvider repoProvider,

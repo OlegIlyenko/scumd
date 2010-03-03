@@ -1,20 +1,19 @@
 package com.asolutions.scmsshd.commands.git;
 
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
+import org.apache.sshd.server.ExitCallback;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.UploadPack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-
-import org.apache.sshd.server.ExitCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.UploadPack;
-
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
 
 public class GitUploadPackSCMCommandHandler extends GitSCMCommandImpl {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -23,6 +22,11 @@ public class GitUploadPackSCMCommandHandler extends GitSCMCommandImpl {
 	
 	public GitUploadPackSCMCommandHandler() {
 		this(new GitSCMRepositoryProvider(), 
+			 new GitUploadPackProvider());
+	}
+
+    public GitUploadPackSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
+		this(repositoryProvider != null ? repositoryProvider : new GitSCMRepositoryProvider(),
 			 new GitUploadPackProvider());
 	}
 

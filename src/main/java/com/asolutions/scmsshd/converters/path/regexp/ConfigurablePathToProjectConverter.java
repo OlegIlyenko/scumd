@@ -2,12 +2,18 @@ package com.asolutions.scmsshd.converters.path.regexp;
 
 import java.util.regex.Pattern;
 
-public class ConfigurablePathToProjectConverter extends
-		AMatchingGroupPathToProjectNameConverter {
+public class ConfigurablePathToProjectConverter extends AMatchingGroupPathToProjectNameConverter {
 	
 	private Pattern projectPattern;
 
-	public void setProjectPattern(String pattern){
+    public ConfigurablePathToProjectConverter() {
+    }
+
+    public ConfigurablePathToProjectConverter(Pattern projectPattern) {
+        this.projectPattern = projectPattern;
+    }
+
+    public void setProjectPattern(String pattern){
 		this.projectPattern = Pattern.compile(pattern);
 	}
 
