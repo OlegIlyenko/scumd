@@ -1,8 +1,8 @@
 package com.asolutions.scmsshd.spring.xml;
 
+import com.asolutions.scmsshd.dao.impl.SimpleRepositoryAclDao;
 import com.asolutions.scmsshd.model.security.Privilege;
 import com.asolutions.scmsshd.model.security.RawRepositoryAcl;
-import com.asolutions.scmsshd.spring.factory.AclFactoryBean;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -39,7 +39,7 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
 
     @Override
     protected Class getBeanClass(Element element) {
-        return AclFactoryBean.class;
+        return SimpleRepositoryAclDao.class;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
             rawAcl.add(getAcl(repoElem));
         }
 
-        builder.addPropertyValue("rawRepositoryAcl", rawAcl);
+        builder.addConstructorArgValue(rawAcl);
     }
 
     private RawRepositoryAcl getAcl(Element element) {

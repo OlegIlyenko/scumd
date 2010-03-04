@@ -34,6 +34,7 @@
                         <xsd:element name="default-server-key-pair" type="DefaultKeyPairProvider" minOccurs="0" />
                         <xsd:element name="file-server-key-pair" type="FileKeyPairProvider" minOccurs="0" />
                         <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" minOccurs="0" />
+                        <xsd:element name="user-dao-acl-file" type="UserDaoAclFile" minOccurs="0" />
                     </xsd:sequence>
 
                     <xsd:attribute name="port" type="xsd:integer" use="required">
@@ -59,6 +60,8 @@
                             <xsd:documentation>Reference to the Repository Access Control List (ACL)</xsd:documentation>
                         </xsd:annotation>
                     </xsd:attribute>
+
+                    <xsd:attribute name="user-dao-acl-ref" type="xsd:string" />
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -71,6 +74,8 @@
     <xsd:element name="file-server-key-pair" type="FileKeyPairProvider"/>
 
     <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" />
+
+    <xsd:element name="user-dao-acl-file" type="UserDaoAclFile" />
 
     <!-- Type definition -->
 
@@ -182,6 +187,10 @@
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="UserDaoAclFile">
+        <xsd:attribute name="file" type="xsd:string" />
     </xsd:complexType>
 
     <xsd:simpleType name="PasswordChecksum">

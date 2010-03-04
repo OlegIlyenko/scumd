@@ -12,21 +12,30 @@ import java.util.List;
  */
 public class SimpleRepositoryAclDao implements RepositoryAclDao {
 
-    private final List<RepositoryAcl> repositoryAcl;
+    private UserDao userDao;
 
-    private final UserDao userDao;
+    private List<RawRepositoryAcl> rawRepositoryAcl;
 
-    public SimpleRepositoryAclDao(List<RawRepositoryAcl> rawRepositoryAcl, UserDao userDao) {
+    public SimpleRepositoryAclDao(List<RawRepositoryAcl> rawRepositoryAcl) {
+        this.rawRepositoryAcl = rawRepositoryAcl;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
-        this.repositoryAcl = createRepositoryAcl(rawRepositoryAcl);
     }
 
     @Override
     public List<RepositoryAcl> getRepositoryAcl() {
-        return repositoryAcl;
+        return getRepositoryAcl(rawRepositoryAcl);
     }
 
-    private List<RepositoryAcl> createRepositoryAcl(List<RawRepositoryAcl> rawAcls) {
+    private List<RepositoryAcl> getRepositoryAcl(List<RawRepositoryAcl> rawAcls) {
+        List<User> availableUsers = userDao.getUsers();
+        List<Group> availableGroups = userDao.getGroups();
         List<RepositoryAcl> acls = new ArrayList<RepositoryAcl>();
 
         for (RawRepositoryAcl r : rawAcls) {
@@ -41,7 +50,7 @@ public class SimpleRepositoryAclDao implements RepositoryAclDao {
 
             for (Privilege p : r.getUserPrivileges().keySet()) {
                 for (String u : r.getUserPrivileges().get(p)) {
-                    User user = userDao.getUserByName(u);
+                    User user = getUserByName(availableUsers, u);
                     if (user == null) {
                         throw new IllegalStateException("Unknown user: " + u);
                     }
@@ -52,7 +61,7 @@ public class SimpleRepositoryAclDao implements RepositoryAclDao {
 
             for (Privilege p : r.getGroupPrivileges().keySet()) {
                 for (String g : r.getGroupPrivileges().get(p)) {
-                    Group group = userDao.getGroupByName(g);
+                    Group group = getGroupByName(availableGroups, g);
                     if (group == null) {
                         throw new IllegalStateException("Unknown group: " + g);
                     }
@@ -61,7 +70,27 @@ public class SimpleRepositoryAclDao implements RepositoryAclDao {
                 }
             }
         }
-        
+
         return acls;
+    }
+
+    private User getUserByName(List<User> users, String name) {
+        for (User u : users) {
+            if (u.getName().equals(name)) {
+                return u;
+            }
+        }
+
+        return null;
+    }
+
+    private Group getGroupByName(List<Group> groups, String name) {
+        for (Group g : groups) {
+            if (g.getName().equals(name)) {
+                return g;
+            }
+        }
+
+        return null;
     }
 }

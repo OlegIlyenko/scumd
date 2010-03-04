@@ -8,9 +8,9 @@ import com.asolutions.scmsshd.commands.factories.GitCommandFactory;
 import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
 import com.asolutions.scmsshd.commands.git.AutoCreatingGitSCMRepositoryProvider;
 import com.asolutions.scmsshd.converters.path.regexp.ConfigurablePathToProjectConverter;
+import com.asolutions.scmsshd.dao.DaoHolder;
+import com.asolutions.scmsshd.dao.RepositoryAclDao;
 import com.asolutions.scmsshd.dao.UserDao;
-import com.asolutions.scmsshd.dao.impl.SimpleRepositoryAclDao;
-import com.asolutions.scmsshd.model.security.RawRepositoryAcl;
 import com.asolutions.scmsshd.service.RepositoryAclService;
 import com.asolutions.scmsshd.service.impl.SimpleRepositoryAclService;
 import org.apache.sshd.SshServer;
@@ -24,7 +24,6 @@ import org.springframework.beans.factory.InitializingBean;
 
 import javax.naming.NamingException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -37,9 +36,9 @@ public class ConfigurableGitSshServer implements InitializingBean {
 
     private int port;
 
-    private List<RawRepositoryAcl> rawRepositoryAcl;
-
     private UserDao userDao;
+
+    private RepositoryAclDao repositoryAclDao;
 
     private String repositoriesDir;
 
@@ -47,28 +46,14 @@ public class ConfigurableGitSshServer implements InitializingBean {
 
     private RepositoryAclService repositoryAclService;
 
+    private DaoHolder daoHolder;
+
     public int getPort() {
         return port;
     }
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public List<RawRepositoryAcl> getRawRepositoryAcl() {
-        return rawRepositoryAcl;
-    }
-
-    public void setRawRepositoryAcl(List<RawRepositoryAcl> rawRepositoryAcl) {
-        this.rawRepositoryAcl = rawRepositoryAcl;
-    }
-
-    public UserDao getUserDao() {
-        return userDao;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
     }
 
     public String getRepositoriesDir() {
@@ -87,9 +72,20 @@ public class ConfigurableGitSshServer implements InitializingBean {
         this.serverKeyPairProvider = serverKeyPairProvider;
     }
 
+    public DaoHolder getDaoHolder() {
+        return daoHolder;
+    }
+
+    public void setDaoHolder(DaoHolder daoHolder) {
+        this.daoHolder = daoHolder;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
-        repositoryAclService = new SimpleRepositoryAclService(new SimpleRepositoryAclDao(rawRepositoryAcl, userDao));
+        userDao = daoHolder.getUserDao();
+        repositoryAclDao = daoHolder.getRepositoryAclDao();
+        repositoryAclDao.setUserDao(userDao);
+        repositoryAclService = new SimpleRepositoryAclService(repositoryAclDao);
 
         final SshServer sshd = SshServer.setUpDefaultServer();
         AutoCreatingGitSCMRepositoryProvider repositoryProvider = new AutoCreatingGitSCMRepositoryProvider();

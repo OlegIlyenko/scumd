@@ -14,6 +14,19 @@
     </git-ssh-server>
 
     <!--
+        You can load User DAO and repository ACL from file.
+
+         This file should have the same structure like this one,
+         but it allowed to contain only one <acl /> and <simple-user-dao /> definitions.
+
+         When you use separate file for User DAO and ACL, then server will automatically
+         detect changes to the file and reload it.
+    -->
+    <!--
+    <user-dao-acl-file file="/path/to/acl/file" />
+    -->
+
+    <!--
         Access Control List (ACL) for the repositories
     -->
     <acl>

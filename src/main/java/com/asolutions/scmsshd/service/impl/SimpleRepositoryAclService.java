@@ -26,6 +26,7 @@ public class SimpleRepositoryAclService implements RepositoryAclService {
                 available.addAll(findPrivileges(user, acl));
             }
         }
+        
         return available;
     }
 

@@ -9,6 +9,10 @@ import java.util.List;
  */
 public interface RepositoryAclDao {
 
+    UserDao getUserDao();
+
+    void setUserDao(UserDao userDao);
+
     List<RepositoryAcl> getRepositoryAcl();
 
 }
