@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 /**
  * @author Oleg Ilyenko
  */
-public class KeyPairBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+public abstract class BaseKeyPairBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {

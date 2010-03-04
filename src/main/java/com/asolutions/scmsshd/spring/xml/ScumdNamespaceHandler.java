@@ -13,7 +13,9 @@ public class ScumdNamespaceHandler extends NamespaceHandlerSupport {
     public static final String DEFAULT_SERVER_KEY_PAIR_ELEM = "default-server-key-pair";
     public static final String FILE_SERVER_KEY_PAIR_ELEM = "file-server-key-pair";
     public static final String SIMPLE_SERVER_KEY_PAIR_ELEM = "simple-server-key-pair";
-    public static final String USER_DAO_ACL_FILE_ELEM = "user-dao-acl-file";
+    public static final String FILE_USER_DAO_ACL_ELEM = "file-user-dao-acl";
+    public static final String DATABASE_USER_DAO_ACL_ELEM = "database-user-dao-acl";
+    public static final String DBCP_CONNECTION_POOL_ELEM = "dbcp-connection-pool";
 
     public static final String DEFAULT_GIT_SSH_SERVER_ID = "git-ssh-server";
     public static final String DEFAULT_USER_DAO_ID = "user-dao";
@@ -24,9 +26,13 @@ public class ScumdNamespaceHandler extends NamespaceHandlerSupport {
     @Override
     public void init() {
         registerBeanDefinitionParser(GIT_SSH_SERVER_ELEM, new GitSshServerBeanDefinitionParser());
+
         registerBeanDefinitionParser(SIMPLE_USER_DAO_ELEM, new SimpleUserDaoBeanDefinitionParser());
         registerBeanDefinitionParser(ACL_ELEM, new AclBeanDefinitionParser());
-        registerBeanDefinitionParser(USER_DAO_ACL_FILE_ELEM, new UserDaoAclFileBeanDefinitionParser());
+
+        registerBeanDefinitionParser(FILE_USER_DAO_ACL_ELEM, new FileUserDaoAclBeanDefinitionParser());
+        registerBeanDefinitionParser(DATABASE_USER_DAO_ACL_ELEM, new DatabaseUserDaoAclBeanDefinitionParser());
+        registerBeanDefinitionParser(DBCP_CONNECTION_POOL_ELEM, new DbcpConnectionPoolBeanDefinitionParser());
 
         registerBeanDefinitionParser(DEFAULT_SERVER_KEY_PAIR_ELEM, new DefaultKeyPairBeanDefinitionParser());
         registerBeanDefinitionParser(FILE_SERVER_KEY_PAIR_ELEM, new FileKeyPairBeanDefinitionParser());

@@ -3,7 +3,6 @@ package com.asolutions.scmsshd.spring.xml;
 import com.asolutions.scmsshd.ConfigurableGitSshServer;
 import com.asolutions.scmsshd.dao.DaoHolder;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -17,7 +16,7 @@ import org.w3c.dom.Element;
  * @author Oleg Ilyenko
  */
 public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    
+
     public static final String PORT_ATTR = "port";
     public static final String REPOSITORIES_BASE_ATTR = "repositories-base";
     public static final String USER_DAO_REF_ATTR = "user-dao-ref";
@@ -30,7 +29,7 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         if (parserContext.isNested()) {
             return null;
         }
-        
+
         return StringUtils.hasText(element.getAttribute("id")) ? element.getAttribute("id") : ScumdNamespaceHandler.DEFAULT_GIT_SSH_SERVER_ID;
     }
 
@@ -46,18 +45,14 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
 
         processKeyPair(element, parserContext, builder);
 
-        if (!processDaoHolder(element, parserContext, builder)) {
-            BeanDefinitionBuilder daoHolderBuilder = BeanDefinitionBuilder.genericBeanDefinition(DaoHolder.class);
+        BeanDefinitionBuilder shadowDaoHolderBuilder = BeanDefinitionBuilder.genericBeanDefinition(DaoHolder.class);
+        boolean userDaoFound = processUserDao(element, parserContext, shadowDaoHolderBuilder);
+        boolean repositoryAclFound = processRepositoryAcl(element, parserContext, shadowDaoHolderBuilder);
 
-            boolean  userDaoFound = processUserDao(element, parserContext, daoHolderBuilder);
-            boolean  repositoryAclFound = processRepositoryAcl(element, parserContext, daoHolderBuilder);
-
-            if (userDaoFound || repositoryAclFound) {
-                builder.addPropertyValue("daoHolder", daoHolderBuilder.getBeanDefinition());
-            } else {
-                builder.addPropertyValue("daoHolder", findBeanDefinition(parserContext, ScumdNamespaceHandler.DEFAULT_DAO_HOLDER_ID));
-            }
-
+        if (!userDaoFound || !repositoryAclFound) {
+            processDaoHolder(element, parserContext, builder);
+        } else {
+            builder.addPropertyValue("daoHolder", shadowDaoHolderBuilder.getBeanDefinition());
         }
     }
 
@@ -70,7 +65,7 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         }
 
         Element keyPair = DomUtils.getChildElementByTagName(element, ScumdNamespaceHandler.DEFAULT_SERVER_KEY_PAIR_ELEM);
-        
+
         if (keyPair == null) {
             keyPair = DomUtils.getChildElementByTagName(element, ScumdNamespaceHandler.FILE_SERVER_KEY_PAIR_ELEM);
         }
@@ -96,8 +91,6 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         } else if (userDao != null) {
             BeanDefinition userDaoBean = parserContext.getDelegate().parseCustomElement(userDao, builder.getRawBeanDefinition());
             builder.addPropertyValue("userDao", userDaoBean);
-        } else if (findBeanDefinition(parserContext, ScumdNamespaceHandler.DEFAULT_USER_DAO_ID) != null) {
-            builder.addPropertyReference("userDao", ScumdNamespaceHandler.DEFAULT_USER_DAO_ID);
         } else {
             return false;
         }
@@ -114,8 +107,6 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         } else if (acl != null) {
             BeanDefinition aclBean = parserContext.getDelegate().parseCustomElement(acl, builder.getRawBeanDefinition());
             builder.addPropertyValue("repositoryAclDao", aclBean);
-        } else if (findBeanDefinition(parserContext, ScumdNamespaceHandler.DEFAULT_ACL_ID) != null) {
-            builder.addPropertyReference("repositoryAclDao", ScumdNamespaceHandler.DEFAULT_ACL_ID);
         } else {
             return false;
         }
@@ -128,29 +119,22 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
      */
     protected boolean processDaoHolder(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
         String daoHolderRef = element.getAttribute(USER_DAO_ACL_REF_ATTR);
-        Element fileDaoHolder = DomUtils.getChildElementByTagName(element, ScumdNamespaceHandler.USER_DAO_ACL_FILE_ELEM);
+        Element fileDaoHolder = DomUtils.getChildElementByTagName(element, ScumdNamespaceHandler.FILE_USER_DAO_ACL_ELEM);
+        Element databaseDaoHolder = DomUtils.getChildElementByTagName(element, ScumdNamespaceHandler.DATABASE_USER_DAO_ACL_ELEM);
 
         if (StringUtils.hasText(daoHolderRef)) {
             builder.addPropertyReference("daoHolder", daoHolderRef);
         } else if (fileDaoHolder != null) {
             BeanDefinition daoHolderBean = parserContext.getDelegate().parseCustomElement(fileDaoHolder, builder.getRawBeanDefinition());
             builder.addPropertyValue("daoHolder", daoHolderBean);
+        } else if (databaseDaoHolder != null) {
+            BeanDefinition daoHolderBean = parserContext.getDelegate().parseCustomElement(databaseDaoHolder, builder.getRawBeanDefinition());
+            builder.addPropertyValue("daoHolder", daoHolderBean);
         } else {
-            return false;
+            builder.addPropertyReference("daoHolder", ScumdNamespaceHandler.DEFAULT_DAO_HOLDER_ID);
         }
 
         return true;
     }
 
-    protected BeanDefinition findBeanDefinition(ParserContext parserContext, String beanName) {
-        BeanDefinition beanDefinition;
-
-        try {
-            beanDefinition = parserContext.getRegistry().getBeanDefinition(beanName);
-        } catch (NoSuchBeanDefinitionException e) {
-            beanDefinition = null;
-        }
-
-        return beanDefinition;
-    }
 }

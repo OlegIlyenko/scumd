@@ -23,7 +23,40 @@
          detect changes to the file and reload it.
     -->
     <!--
-    <user-dao-acl-file file="/path/to/acl/file" />
+    <file-user-dao-acl file="/path/to/acl/file" />
+    -->
+
+    <!--
+        You can also use database to store users, groups and repository ACL information.
+
+        All you need to do is to provide your database connection information.
+        All needed tables would be created automatically.
+
+        At the moment I have tested it against MySql, but if you want to use another database and
+        something is not working, then you can customize sql statements by providing sql-statements-file attribute.
+    -->
+    <database-user-dao-acl url="jdbc:mysql://localhost:3306/git"
+                           username="gitadmin"
+                           password="secret"
+                           driver-class="com.mysql.jdbc.Driver">
+        <dbcp-connection-pool/>
+    </database-user-dao-acl>
+
+    <!-- Here is an example of the full database configuration -->
+    <!--
+    <database-user-dao-acl url="jdbc:mysql://localhost:3306/git"
+                           username="gitadmin"
+                           password="secret"
+                           driver-class="com.mysql.jdbc.Driver"
+                           sql-statements-file="/path/to/my/sql-statements-file.properties">
+        <dbcp-connection-pool max-idle="10"
+                              min-idle="5"
+                              max-active="20"
+                              max-wait="1000"
+                              min-evictable-idle-time-millis="15000"
+                              num-tests-per-eviction-run="2"
+                              max-open-prepared-statements="20" />
+    </database-user-dao-acl>
     -->
 
     <!--

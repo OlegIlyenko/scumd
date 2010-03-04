@@ -28,14 +28,15 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="beans:identifiedType">
-                    <xsd:sequence>
-                        <xsd:element name="simple-user-dao" type="SimpleUserDao" minOccurs="0" />
-                        <xsd:element name="acl" type="RepositoryAcl" minOccurs="0" />
-                        <xsd:element name="default-server-key-pair" type="DefaultKeyPairProvider" minOccurs="0" />
-                        <xsd:element name="file-server-key-pair" type="FileKeyPairProvider" minOccurs="0" />
-                        <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" minOccurs="0" />
-                        <xsd:element name="user-dao-acl-file" type="UserDaoAclFile" minOccurs="0" />
-                    </xsd:sequence>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="simple-user-dao" type="SimpleUserDao" minOccurs="0"/>
+                        <xsd:element name="acl" type="RepositoryAcl" minOccurs="0"/>
+                        <xsd:element name="default-server-key-pair" type="DefaultKeyPairProvider" minOccurs="0"/>
+                        <xsd:element name="file-server-key-pair" type="FileKeyPairProvider" minOccurs="0"/>
+                        <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" minOccurs="0"/>
+                        <xsd:element name="file-user-dao-acl" type="UserDaoAclFile" minOccurs="0"/>
+                        <xsd:element name="database-user-dao-acl" type="DatabaseUserDaoAcl" minOccurs="0"/>
+                    </xsd:choice>
 
                     <xsd:attribute name="port" type="xsd:integer" use="required">
                         <xsd:annotation>
@@ -61,7 +62,7 @@
                         </xsd:annotation>
                     </xsd:attribute>
 
-                    <xsd:attribute name="user-dao-acl-ref" type="xsd:string" />
+                    <xsd:attribute name="user-dao-acl-ref" type="xsd:string"/>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -73,9 +74,11 @@
 
     <xsd:element name="file-server-key-pair" type="FileKeyPairProvider"/>
 
-    <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" />
+    <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider"/>
 
-    <xsd:element name="user-dao-acl-file" type="UserDaoAclFile" />
+    <xsd:element name="file-user-dao-acl" type="UserDaoAclFile"/>
+
+    <xsd:element name="database-user-dao-acl" type="DatabaseUserDaoAcl"/>
 
     <!-- Type definition -->
 
@@ -96,7 +99,7 @@
                 <xsd:sequence>
                     <xsd:element name="user" type="User" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:sequence>
-                <xsd:attribute name="name" type="xsd:string" use="required" />
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -107,22 +110,22 @@
                 <xsd:choice minOccurs="0">
                     <xsd:element name="password">
                         <xsd:complexType>
-                            <xsd:attribute name="password" type="xsd:string" use="required" />
-                            <xsd:attribute name="checksum" type="PasswordChecksum" default="none" />
+                            <xsd:attribute name="password" type="xsd:string" use="required"/>
+                            <xsd:attribute name="checksum" type="PasswordChecksum" default="none"/>
                         </xsd:complexType>
                     </xsd:element>
 
                     <xsd:element name="public-key">
                         <xsd:complexType mixed="true">
-                            <xsd:attribute name="file" type="xsd:string" use="optional" />
+                            <xsd:attribute name="file" type="xsd:string" use="optional"/>
                         </xsd:complexType>
                     </xsd:element>
                 </xsd:choice>
-                <xsd:attribute name="name" type="xsd:string" use="required" />
-                <xsd:attribute name="password" type="xsd:string" />
-                <xsd:attribute name="expire" type="xsd:date" />
-                <xsd:attribute name="active" type="xsd:boolean" default="true" />
-                <xsd:attribute name="groups" type="xsd:string" />
+                <xsd:attribute name="name" type="xsd:string" use="required"/>
+                <xsd:attribute name="password" type="xsd:string"/>
+                <xsd:attribute name="expire" type="xsd:date"/>
+                <xsd:attribute name="active" type="xsd:boolean" default="true"/>
+                <xsd:attribute name="groups" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -131,7 +134,7 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:sequence minOccurs="1" maxOccurs="unbounded">
-                    <xsd:element name="repository" type="Repository" />
+                    <xsd:element name="repository" type="Repository"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -139,13 +142,14 @@
 
     <xsd:complexType name="Repository">
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
-            <xsd:element name="users" type="RepositoryIdentityAcl" />
-            <xsd:element name="groups" type="RepositoryIdentityAcl" />
+            <xsd:element name="users" type="RepositoryIdentityAcl"/>
+            <xsd:element name="groups" type="RepositoryIdentityAcl"/>
         </xsd:choice>
-        
+
         <xsd:attribute name="path" type="xsd:string" use="required">
             <xsd:annotation>
-                <xsd:documentation>Repository path pattern list. Patterns is similar to the ANT path. You can use * and ** wildcards.</xsd:documentation>
+                <xsd:documentation>Repository path pattern list. Patterns is similar to the ANT path. You can use * and ** wildcards.
+                </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
     </xsd:complexType>
@@ -163,7 +167,7 @@
         </xsd:attribute>
     </xsd:complexType>
 
-    <xsd:complexType name="DefaultKeyPairProvider" />
+    <xsd:complexType name="DefaultKeyPairProvider"/>
 
     <xsd:complexType name="FileKeyPairProvider">
         <xsd:complexContent>
@@ -171,7 +175,7 @@
                 <xsd:sequence>
                     <xsd:element name="key-file" minOccurs="0" maxOccurs="unbounded">
                         <xsd:complexType>
-                            <xsd:attribute name="path" type="xsd:string" />
+                            <xsd:attribute name="path" type="xsd:string"/>
                         </xsd:complexType>
                     </xsd:element>
                 </xsd:sequence>
@@ -183,22 +187,55 @@
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
                 <xsd:sequence>
-                    <xsd:element name="key" minOccurs="0" maxOccurs="unbounded" />
+                    <xsd:element name="key" minOccurs="0" maxOccurs="unbounded"/>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="UserDaoAclFile">
-        <xsd:attribute name="file" type="xsd:string" />
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="file" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="DatabaseUserDaoAcl">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:choice minOccurs="1" maxOccurs="1">
+                    <xsd:element name="dbcp-connection-pool" type="DbcpConnectionPool" />
+                </xsd:choice>
+                <xsd:attribute name="driver-class" type="xsd:string" use="required"/>
+                <xsd:attribute name="url" type="xsd:string" use="required"/>
+                <xsd:attribute name="username" type="xsd:string" use="required"/>
+                <xsd:attribute name="password" type="xsd:string" use="required"/>
+                <xsd:attribute name="sql-statements-file" type="xsd:string" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="DbcpConnectionPool">
+        <xsd:complexContent>
+            <xsd:extension base="beans:identifiedType">
+                <xsd:attribute name="max-idle" type="xsd:integer" use="optional"/>
+                <xsd:attribute name="min-idle" type="xsd:integer" use="optional"/>
+                <xsd:attribute name="max-active" type="xsd:integer" use="optional"/>
+                <xsd:attribute name="max-wait" type="xsd:long" use="optional"/>
+                <xsd:attribute name="min-evictable-idle-time-millis" type="xsd:long" use="optional"/>
+                <xsd:attribute name="num-tests-per-eviction-run" type="xsd:integer" use="optional"/>
+                <xsd:attribute name="max-open-prepared-statements" type="xsd:integer" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:simpleType name="PasswordChecksum">
-		<xsd:restriction base="xsd:NMTOKEN">
-            <xsd:enumeration value="none" />
-            <xsd:enumeration value="md5" />
-            <xsd:enumeration value="sha1" />
-		</xsd:restriction>
-	</xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+            <xsd:enumeration value="none"/>
+            <xsd:enumeration value="md5"/>
+            <xsd:enumeration value="sha1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
 </xsd:schema>

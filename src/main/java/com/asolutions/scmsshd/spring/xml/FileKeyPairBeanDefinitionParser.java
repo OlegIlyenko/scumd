@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Oleg Ilyenko
  */
-public class FileKeyPairBeanDefinitionParser extends KeyPairBeanDefinitionParser {
+public class FileKeyPairBeanDefinitionParser extends BaseKeyPairBeanDefinitionParser {
 
     public static final String KEY_FILE_ELEM = "key-file";
 

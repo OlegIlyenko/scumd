@@ -1,9 +1,12 @@
 package com.asolutions.scmsshd.spring.xml;
 
+import com.asolutions.scmsshd.dao.DaoHolder;
 import com.asolutions.scmsshd.dao.impl.SimpleUserDao;
 import com.asolutions.scmsshd.model.security.*;
 import com.asolutions.scmsshd.util.StringUtil;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
@@ -69,6 +72,22 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
 
         builder.addConstructorArgValue(users);
         builder.addConstructorArgValue(groups);
+        registerInDaoHolder(parserContext, element, builder.getBeanDefinition());
+    }
+
+    private void registerInDaoHolder(ParserContext parserContext, Element element, BeanDefinition beanDefinition) {
+        if (!parserContext.isNested() && !StringUtils.hasText(element.getAttribute("id"))) {
+            BeanDefinition daoHolder = null;
+
+            try {
+                daoHolder = parserContext.getRegistry().getBeanDefinition(ScumdNamespaceHandler.DEFAULT_DAO_HOLDER_ID);
+            } catch (NoSuchBeanDefinitionException e) {
+                daoHolder = BeanDefinitionBuilder.genericBeanDefinition(DaoHolder.class).getBeanDefinition();
+                parserContext.getRegistry().registerBeanDefinition(ScumdNamespaceHandler.DEFAULT_DAO_HOLDER_ID, daoHolder);
+            }
+
+            daoHolder.getPropertyValues().addPropertyValue("userDao", beanDefinition);
+        }
     }
 
     private List<Group> findGroups(Element element) {

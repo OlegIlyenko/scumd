@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Oleg Ilyenko
  */
-public class SimpleKeyPairBeanDefinitionParser extends KeyPairBeanDefinitionParser {
+public class SimpleKeyPairBeanDefinitionParser extends BaseKeyPairBeanDefinitionParser {
 
     public static final String KEY_ELEM = "key";
 

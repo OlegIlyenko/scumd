@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 /**
  * @author Oleg Ilyenko
  */
-public class DefaultKeyPairBeanDefinitionParser extends KeyPairBeanDefinitionParser {
+public class DefaultKeyPairBeanDefinitionParser extends BaseKeyPairBeanDefinitionParser {
 
     @Override
     protected Class getBeanClass(Element element) {
