@@ -1,6 +1,6 @@
 package com.asolutions.scmsshd.authorizors;
 
-import com.asolutions.scmsshd.commands.git.AutoCreatingGitSCMRepositoryProvider;
+import com.asolutions.scmsshd.commands.git.GitSCMRepositoryProvider;
 import com.asolutions.scmsshd.dao.UserDao;
 import com.asolutions.scmsshd.model.security.Privilege;
 import com.asolutions.scmsshd.model.security.User;
@@ -18,7 +18,7 @@ public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
 
     private RepositoryAclService aclService;
 
-    private AutoCreatingGitSCMRepositoryProvider repositoryProvider;
+    private GitSCMRepositoryProvider repositoryProvider;
 
     private String repositoriesDir;
 
@@ -32,11 +32,11 @@ public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
         this.aclService = aclService;
     }
 
-    public AutoCreatingGitSCMRepositoryProvider getRepositoryProvider() {
+    public GitSCMRepositoryProvider getRepositoryProvider() {
         return repositoryProvider;
     }
 
-    public void setRepositoryProvider(AutoCreatingGitSCMRepositoryProvider repositoryProvider) {
+    public void setRepositoryProvider(GitSCMRepositoryProvider repositoryProvider) {
         this.repositoryProvider = repositoryProvider;
     }
 

@@ -22,13 +22,8 @@ public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
 	private GitSCMRepositoryProvider repositoryProvider;
 	private GitReceivePackProvider receivePackProvider;
 
-	public GitReceivePackSCMCommandHandler() {
-		this(new GitSCMRepositoryProvider(), new GitReceivePackProvider());
-	}
-
     public GitReceivePackSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
-        this(repositoryProvider != null ? repositoryProvider : new GitSCMRepositoryProvider(),
-                new GitReceivePackProvider());
+        this(repositoryProvider, new GitReceivePackProvider());
     }
 
 	public GitReceivePackSCMCommandHandler(

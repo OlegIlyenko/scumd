@@ -14,10 +14,6 @@ public class GitSCMCommandHandler implements ISCMCommandHandler {
 	private ISCMCommandHandler uploadPackHandler;
 	private ISCMCommandHandler receivePackHandler;
 
-	public GitSCMCommandHandler() {
-		this(new GitUploadPackSCMCommandHandler(), new GitReceivePackSCMCommandHandler());
-	}
-
     public GitSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
 		this(new GitUploadPackSCMCommandHandler(repositoryProvider), new GitReceivePackSCMCommandHandler(repositoryProvider));
 	}

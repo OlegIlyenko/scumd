@@ -6,7 +6,7 @@ import com.asolutions.scmsshd.authorizors.RepositoryAclProjectAuthorizer;
 import com.asolutions.scmsshd.commands.factories.CommandFactoryBase;
 import com.asolutions.scmsshd.commands.factories.GitCommandFactory;
 import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
-import com.asolutions.scmsshd.commands.git.AutoCreatingGitSCMRepositoryProvider;
+import com.asolutions.scmsshd.commands.git.GitSCMRepositoryProvider;
 import com.asolutions.scmsshd.converters.path.regexp.ConfigurablePathToProjectConverter;
 import com.asolutions.scmsshd.dao.DaoHolder;
 import com.asolutions.scmsshd.dao.RepositoryAclDao;
@@ -88,7 +88,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
         repositoryAclService = new SimpleRepositoryAclService(repositoryAclDao);
 
         final SshServer sshd = SshServer.setUpDefaultServer();
-        AutoCreatingGitSCMRepositoryProvider repositoryProvider = new AutoCreatingGitSCMRepositoryProvider();
+        GitSCMRepositoryProvider repositoryProvider = new GitSCMRepositoryProvider("");
 
         sshd.setPort(port);
         setCommandFactory(sshd, repositoryProvider);
@@ -114,7 +114,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
         sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao));
     }
 
-    private void setCommandFactory(SshServer sshd, AutoCreatingGitSCMRepositoryProvider repositoryProvider) throws NamingException {
+    private void setCommandFactory(SshServer sshd, GitSCMRepositoryProvider repositoryProvider) throws NamingException {
         CommandFactoryBase commandFactory = new GitCommandFactory(repositoryProvider);
         commandFactory.setPathToProjectNameConverter(new ConfigurablePathToProjectConverter(Pattern.compile("^/(.*)$")));
 
@@ -127,7 +127,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
         sshd.setCommandFactory(commandFactory);
     }
 
-    private void setupAuthorizers(CommandFactoryBase commandFactory, AutoCreatingGitSCMRepositoryProvider repositoryProvider) throws NamingException {
+    private void setupAuthorizers(CommandFactoryBase commandFactory, GitSCMRepositoryProvider repositoryProvider) throws NamingException {
         RepositoryAclProjectAuthorizer authorizer = new RepositoryAclProjectAuthorizer();
         authorizer.setRepositoriesDir(repositoriesDir);
         authorizer.setRepositoryProvider(repositoryProvider);

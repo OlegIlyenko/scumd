@@ -19,15 +19,9 @@ public class GitUploadPackSCMCommandHandler extends GitSCMCommandImpl {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	private GitSCMRepositoryProvider repositoryProvider;
 	private GitUploadPackProvider uploadPackProvider;
-	
-	public GitUploadPackSCMCommandHandler() {
-		this(new GitSCMRepositoryProvider(), 
-			 new GitUploadPackProvider());
-	}
 
     public GitUploadPackSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
-		this(repositoryProvider != null ? repositoryProvider : new GitSCMRepositoryProvider(),
-			 new GitUploadPackProvider());
+		this(repositoryProvider, new GitUploadPackProvider());
 	}
 
 	public GitUploadPackSCMCommandHandler(

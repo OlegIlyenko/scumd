@@ -34,7 +34,7 @@ public class RawRepositoryAcl {
         return groupPrivileges;
     }
 
-    public void setGroupPrivileges(Map<Privilege, List<String>> geoupPrivileges) {
-        this.groupPrivileges = geoupPrivileges;
+    public void setGroupPrivileges(Map<Privilege, List<String>> groupPrivileges) {
+        this.groupPrivileges = groupPrivileges;
     }
 }
