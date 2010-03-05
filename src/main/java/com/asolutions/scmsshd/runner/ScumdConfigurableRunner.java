@@ -25,7 +25,15 @@ public class ScumdConfigurableRunner {
         }
 
         // Just create context. All beans have it's own lifecycle including SSHD server
-        new FileSystemXmlApplicationContext(configLocation);
+        new FileSystemXmlApplicationContext(fixConfigLocation(configLocation));
+    }
+
+    private static String fixConfigLocation(String configLocation) {
+        if (configLocation.startsWith("/")) {
+            return "file:" + configLocation;
+        } else {
+            return configLocation;
+        }
     }
 
     private static String getDefaultConfigLocation() throws IOException {
@@ -46,6 +54,8 @@ public class ScumdConfigurableRunner {
     private static void createDefaultConfiguration() throws IOException {
         File defaultDir = getDeraultDir();
         defaultDir.mkdir();
+        showMessage("Creating SCuMD default home directory at " + defaultDir.getAbsolutePath());
+
 
         File gitRepos = createDefaultGitReposDir(defaultDir);
 
@@ -58,6 +68,7 @@ public class ScumdConfigurableRunner {
 
         if (!gitRepos.exists()) {
             gitRepos.mkdir();
+            showMessage("Creating git repositories base directory at " + gitRepos.getAbsolutePath());
         }
 
         return gitRepos;
@@ -80,10 +91,13 @@ public class ScumdConfigurableRunner {
             target.close();
         }
 
-        System.err.println("No default configuration was found!");
-        System.out.println("Default configuration was created at '" + defaultConfig.getAbsolutePath() +
-                "'. Please review configuration and start SCuMD again.");
+        showMessage("No default configuration was found!");
+        showMessage("Default configuration was created at '" + defaultConfig.getAbsolutePath() + "'. Please review configuration and start SCuMD again.");
         System.exit(1);
+    }
+
+    private static void showMessage(String message) {
+        System.out.println(message);
     }
 
     private static File getDeraultDir() {
