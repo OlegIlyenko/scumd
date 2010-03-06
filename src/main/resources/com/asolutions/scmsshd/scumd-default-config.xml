@@ -8,6 +8,9 @@
 
         You can define ACL, server key pair and all other dependencies within <git-ssh-server /> tag or provide
         them as references through attributes.
+
+        In this example git URL (for localhost) would look like this:
+            ssh://testuser@localhost:1122/testrepo.git
     -->
     <git-ssh-server port="1122" repositories-base="${gitRepos}">
 

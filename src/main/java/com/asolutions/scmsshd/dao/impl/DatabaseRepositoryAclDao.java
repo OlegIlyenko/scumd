@@ -71,8 +71,6 @@ public class DatabaseRepositoryAclDao extends BaseDatabaseDao implements Reposit
         }
 
         public void processRow(ResultSet rs) throws SQLException {
-            System.out.println(rs.getString("repoName") + ", " + rs.getString("type") + ", " + rs.getString("name"));
-
             String repoName = rs.getString("repoName");
             RepositoryAcl repositoryAcl = acl.get(repoName);
 
