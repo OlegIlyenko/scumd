@@ -34,7 +34,17 @@ public class UserDaoPasswordAuthenticator extends BaseUserDaoAuthenticator imple
                 passwordChecksum = CryptoUtil.calculateChecksum(password, policy.getEncodingAlgorithm().getAlgorithm());
             }
 
-            return policy.getPassword().equals(passwordChecksum);
+            boolean success = policy.getPassword().equals(passwordChecksum);
+
+            if (log.isDebugEnabled()) {
+                if (success) {
+                    log.debug("User '" + userName + "' was successfully authenticated by password");
+                } else {
+                    log.warn("User '" + userName + "' failed authentication by password!");
+                }
+            }
+
+            return success;
         } else {
             return false;
         }

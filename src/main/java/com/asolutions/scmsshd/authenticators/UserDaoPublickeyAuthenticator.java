@@ -30,8 +30,17 @@ public class UserDaoPublickeyAuthenticator extends BaseUserDaoAuthenticator impl
         if (user.getAuthPolicy() instanceof PublicKeyAuthPolicy) {
             PublicKeyAuthPolicy policy = (PublicKeyAuthPolicy) user.getAuthPolicy();
             PublicKey userKey = policy.getPublicKey();
+            boolean success = key.equals(userKey);
 
-            return key.equals(userKey);
+            if (log.isDebugEnabled()) {
+                if (success) {
+                    log.debug("User '" + userName + "' was successfully authenticated by public key");
+                } else {
+                    log.warn("User '" + userName + "' failed authentication by public key!");
+                }
+            }
+
+            return success;
         } else {
             return false;
         }

@@ -98,7 +98,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
         setupAuthenticators(sshd);
 
         try {
-            log.info("Starting SSH Server on port " + port + "...");
+            log.info("Starting SSH Server on port " + port + " for serving repositories at: " + repositoriesDir);
             sshd.start();
         } catch (Exception e) {
             log.error("Aborting because of exceptoin.", e);

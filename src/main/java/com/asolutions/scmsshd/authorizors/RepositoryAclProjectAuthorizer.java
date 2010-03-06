@@ -7,6 +7,8 @@ import com.asolutions.scmsshd.model.security.User;
 import com.asolutions.scmsshd.service.RepositoryAclService;
 import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Set;
@@ -15,6 +17,8 @@ import java.util.Set;
  * @author Oleg Ilyenko
  */
 public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
+
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private RepositoryAclService aclService;
 
@@ -62,10 +66,13 @@ public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
         Set<Privilege> available = aclService.getAvailablePrivileges(project, user);
 
         boolean repositoryExists = repositoryProvider.exists(new File(repositoriesDir), project);
+        log.debug("User '" + userName + "' made attempt to access" + (repositoryExists ? "" : " non-existing") + " repository '" + project +
+                "'. He has following privileges for it: " + available);
 
         if (!repositoryExists && available.contains(Privilege.Create)) {
             return AuthorizationLevel.AUTH_LEVEL_READ_WRITE;
         } else if (!repositoryExists) {
+            log.warn("User '" + userName + "' made attempt to create new repository '" + project + "' but he does not have Create privilege!");
             return null;
         }
 
@@ -74,6 +81,7 @@ public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
         } else if (available.contains(Privilege.ReadOnly)) {
             return AuthorizationLevel.AUTH_LEVEL_READ_ONLY;
         } else {
+            log.warn("User '" + userName + "' made attempt to access repository '" + project + "' but he does not have rights for it!");
             return null;
         }
     }

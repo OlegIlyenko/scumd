@@ -36,7 +36,6 @@ public class SimpleRepositoryAclService implements RepositoryAclService {
         for (PrivilegeOwner<User> userOwner : acl.getUsers()) {
             if (userOwner.getOwner().getName().equals(user.getName())) {
                 available.add(userOwner.getPrivilege());
-                break;
             }
         }
 
