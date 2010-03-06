@@ -6,11 +6,30 @@
         Git SSH server. You can configure most of the properties here.
         You can also define more than one server within configuration.
 
-        You can define ACL, server key pair and all other dependencies within <git-ssh-server /> tag or provide
-        them as references through attributes.
+        You can define ACL, user DAO and server key pair within <git-ssh-server /> tag or provide
+        them as references through attributes (acl-ref, user-dao-ref, user-dao-acl-ref) and then define them
+        elsewhere in the document (with correspondent 'id' attribute). You can also define
+        ACL, user DAO and server key pair outside <git-ssh-server /> tag and without 'id' attribute,
+        and in this case they would be used by all git servers defined in this file automatically.
 
         In this example git URL (for localhost) would look like this:
             ssh://testuser@localhost:1122/testrepo.git
+
+        If you want to create new repository, you can clone non existing repository:
+            git clone ssh://testuser@localhost:1122/testrepo.git
+
+        or create new repo locally (or you can use one you already have):
+            git init testrepo
+            cd testrepo
+            vim testfile.txt
+            git add testfile.txt
+            git commit -m "initial commit"
+        then you should add new origin:
+            git remote add origin ssh://testuser@localhost:1122/testrepo.git
+        and push it:
+            git push origin master
+
+        Please note, if you want user to be able to create new repositories, he should have 'Create' permission.
     -->
     <git-ssh-server port="1122" repositories-base="${gitRepos}">
 
@@ -80,7 +99,7 @@
     <acl>
 
         <repository path="testrepo.git">
-            <users allow="ReadOnly" list="testuser" />
+            <users allow="Create, ReadWrite" list="testuser" />
         </repository>
 
         <!--
