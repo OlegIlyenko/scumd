@@ -1,5 +1,6 @@
 package com.asolutions.scmsshd.runner;
 
+import com.asolutions.scmsshd.util.SpringUtil;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import java.io.*;
@@ -18,6 +19,11 @@ public class ScumdConfigurableRunner {
     public static final String SCUMD_DEFAULTs_CONFIG_FILE = "/com/asolutions/scmsshd/scumd-default-config.xml";
 
     public static void main(String[] args) throws Exception {
+        if (args.length == 1 && (args[0].equals("-h") || args[0].equals("--help"))) {
+            printUsage();
+            System.exit(0);
+        }
+
         String configLocation = getConfigLocation(args);
 
         if (configLocation == null) {
@@ -25,15 +31,7 @@ public class ScumdConfigurableRunner {
         }
 
         // Just create context. All beans have it's own lifecycle including SSHD server
-        new FileSystemXmlApplicationContext(fixConfigLocation(configLocation));
-    }
-
-    private static String fixConfigLocation(String configLocation) {
-        if (configLocation.startsWith("/")) {
-            return "file:" + configLocation;
-        } else {
-            return configLocation;
-        }
+        new FileSystemXmlApplicationContext(SpringUtil.fixConfigLocation(configLocation));
     }
 
     private static String getDefaultConfigLocation() throws IOException {
@@ -119,6 +117,9 @@ public class ScumdConfigurableRunner {
     }
 
     private static void printUsage() {
-        System.out.println("Usage:\n\tscumd-VERSION-standalone.jar [/path/to/config.xml]");
+        System.out.println("Usage:\n");
+        System.out.println("\tjava -jar scumd-VERSION-standalone.jar [/path/to/config.xml]\n");
+        System.out.println("\tIf you plain to use database, you should also add driver to the classpath:\n");
+        System.out.println("\tjava -Done-jar.class.path=/path/to/my-database-driver.jar -jar scumd-VERSION-standalone.jar [/path/to/config.xml]");
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -58,6 +59,10 @@ public abstract class BaseDatabaseDao implements InitializingBean {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    protected void execute(String sql) {
+        jdbcTemplate.update(sql, new HashMap<String, Object>());
     }
 
     protected abstract void createTables();

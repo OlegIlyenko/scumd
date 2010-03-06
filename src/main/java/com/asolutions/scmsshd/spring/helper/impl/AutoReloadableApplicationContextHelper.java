@@ -1,6 +1,7 @@
 package com.asolutions.scmsshd.spring.helper.impl;
 
 import com.asolutions.scmsshd.spring.helper.ApplicationContextHelper;
+import com.asolutions.scmsshd.util.SpringUtil;
 import org.springframework.context.support.AbstractRefreshableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
@@ -39,7 +40,7 @@ public class AutoReloadableApplicationContextHelper implements ApplicationContex
     }
 
     protected AbstractRefreshableApplicationContext createApplicationContext() {
-        return new FileSystemXmlApplicationContext(applicationContextFile.getAbsolutePath());
+        return new FileSystemXmlApplicationContext(SpringUtil.fixConfigLocation(applicationContextFile.getAbsolutePath()));
     }
 
     protected void doReload() {

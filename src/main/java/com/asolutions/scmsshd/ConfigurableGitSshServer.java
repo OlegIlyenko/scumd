@@ -108,7 +108,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
             sshd.stop();
         }
     }
-    
+
     private void setupAuthenticators(SshServer sshd) {
         sshd.setPasswordAuthenticator(new UserDaoPasswordAuthenticator(userDao));
         sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao));
