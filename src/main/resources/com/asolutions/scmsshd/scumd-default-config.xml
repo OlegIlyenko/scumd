@@ -65,7 +65,7 @@
 
         Please, don't forget to add JDBC driver to the classpath, when you are starting the server.
         For example:
-          java -Done-jar.class.path=/path/to/my-database-driver.jar -jar scumd-VERSION-standalone.jar
+          java -cp /path/to/my-database-driver.jar;scumd-VERSION.jar com.asolutions.scmsshd.runner.ScumdConfigurableRunner
     -->
     <!--
     <database-user-dao-acl url="jdbc:mysql://localhost:3306/git"

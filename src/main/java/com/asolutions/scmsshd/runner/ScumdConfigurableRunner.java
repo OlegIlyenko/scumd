@@ -118,8 +118,8 @@ public class ScumdConfigurableRunner {
 
     private static void printUsage() {
         System.out.println("Usage:\n");
-        System.out.println("\tjava -jar scumd-VERSION-standalone.jar [/path/to/config.xml]\n");
+        System.out.println("\tjava -jar scumd-VERSION.jar [/path/to/config.xml]\n");
         System.out.println("\tIf you plain to use database, you should also add driver to the classpath:\n");
-        System.out.println("\tjava -Done-jar.class.path=/path/to/my-database-driver.jar -jar scumd-VERSION-standalone.jar [/path/to/config.xml]");
+        System.out.println("\tjava -cp /path/to/my-database-driver.jar;scumd-VERSION.jar com.asolutions.scmsshd.runner.ScumdConfigurableRunner [/path/to/config.xml]");
     }
 }

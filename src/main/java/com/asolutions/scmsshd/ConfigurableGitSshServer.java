@@ -18,6 +18,7 @@ import org.apache.sshd.common.Compression;
 import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.compression.CompressionNone;
+import org.apache.sshd.common.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -86,6 +87,8 @@ public class ConfigurableGitSshServer implements InitializingBean {
         repositoryAclDao = daoHolder.getRepositoryAclDao();
         repositoryAclDao.setUserDao(userDao);
         repositoryAclService = new SimpleRepositoryAclService(repositoryAclDao);
+
+        SecurityUtils.setRegisterBouncyCastle(true);
 
         final SshServer sshd = SshServer.setUpDefaultServer();
         GitSCMRepositoryProvider repositoryProvider = new GitSCMRepositoryProvider("");

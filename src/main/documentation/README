@@ -1,0 +1,19 @@
+SCuMD ${project.version}
+=============================
+
+A pure Java sshd daemon for serving up of git over the native
+protocol. SCuMD is based upon jgit (jgit.org) by Shawn Pearce.
+   	
+This package is licensed under the MIT License
+
+At the beginning...
+-----------------------------
+
+Just execute (and follow application output):
+    java -jar scumd-${project.version}.jar
+
+If you are planing to store Users and Project ACL in Database, use this command:
+    java -cp /path/to/my-database-driver.jar;scumd-${project.version}.jar com.asolutions.scmsshd.runner.ScumdConfigurableRunner
+
+For additional help run:
+    java -jar scumd-${project.version}.jar -h
