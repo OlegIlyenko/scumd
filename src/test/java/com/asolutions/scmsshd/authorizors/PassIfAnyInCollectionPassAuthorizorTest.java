@@ -1,14 +1,14 @@
 package com.asolutions.scmsshd.authorizors;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-
+import com.asolutions.MockTestCase;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import org.jmock.Expectations;
 import org.junit.Test;
 
-import com.asolutions.MockTestCase;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 	
@@ -22,8 +22,8 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 	
 	@Test
 	public void testIfAnyPassItPasses() throws Exception {
-		final IProjectAuthorizer failsAuth = context.mock(IProjectAuthorizer.class, "failsAuth");
-		final IProjectAuthorizer passesAuth = context.mock(IProjectAuthorizer.class, "passesAuth");
+		final ProjectAuthorizer failsAuth = context.mock(ProjectAuthorizer.class, "failsAuth");
+		final ProjectAuthorizer passesAuth = context.mock(ProjectAuthorizer.class, "passesAuth");
 		
 		checking(new Expectations(){{
 			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT);
@@ -43,7 +43,7 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 	
 	@Test
 	public void testIfNonePassItFails() throws Exception {
-		final IProjectAuthorizer failsAuth = context.mock(IProjectAuthorizer.class, "failsAuth");
+		final ProjectAuthorizer failsAuth = context.mock(ProjectAuthorizer.class, "failsAuth");
 		
 		checking(new Expectations(){{
 			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT);

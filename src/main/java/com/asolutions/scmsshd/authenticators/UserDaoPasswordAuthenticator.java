@@ -38,9 +38,9 @@ public class UserDaoPasswordAuthenticator extends BaseUserDaoAuthenticator imple
 
             if (log.isDebugEnabled()) {
                 if (success) {
-                    log.debug("User '" + userName + "' was successfully authenticated by password");
+                    log.debug("User '" + userName + "' was successfully authenticated with password");
                 } else {
-                    log.warn("User '" + userName + "' failed authentication by password!");
+                    log.warn("User '" + userName + "' failed authentication with password!");
                 }
             }
 

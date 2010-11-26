@@ -122,7 +122,7 @@
         -->
     </acl>
 
-    <!-- User DAO. At the moment anly simple implementation available. It can be defined like this (or, of course, within git server tag). -->
+    <!-- User DAO. At the moment only simple implementation available. It can be defined like this (or, of course, within git server tag). -->
     <simple-user-dao>
 
         <user name="testuser" password="secret" />
@@ -165,7 +165,7 @@
 
         <group name="generic-group-1" />
 
-        <!-- Group list can be also provided through attribute and public kay can be inline -->
+        <!-- Group list can be also provided through attribute and public key can be inline -->
         <!--
         <user name="user6" groups="generic-group-1, public">
             <public-key>

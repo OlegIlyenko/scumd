@@ -10,7 +10,7 @@
 
     <properties>
         <project.source.encoding>UTF-8</project.source.encoding>
-        <spring.version>3.0.0.RELEASE</spring.version>
+        <spring.version>3.0.5.RELEASE</spring.version>
     </properties>
 
     <prerequisites>
@@ -31,12 +31,17 @@
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-core</artifactId>
-            <version>0.3.0</version>
+            <version>0.5.0</version>
+        </dependency>
+        <dependency>                          
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>                        
+            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
-            <artifactId>jgit-core</artifactId>
-            <version>0.5.1-SNAPSHOT</version>
+            <artifactId>org.eclipse.jgit.pgm</artifactId>
+            <version>0.9.3</version>
         </dependency>
         <dependency>
             <groupId>org.jmock</groupId>
@@ -60,7 +65,7 @@
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
             <version>2.5.1</version>
-            <scope>test</scope>            
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -89,7 +94,7 @@
             <version>1.45</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -101,7 +106,7 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>failsafe-maven-plugin</artifactId>
@@ -120,7 +125,7 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>                                                                       
                 <configuration>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                     <descriptors>
@@ -154,4 +159,10 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>jgit-repository</id>
+            <url>http://download.eclipse.org/jgit/maven</url>
+        </repository>
+    </repositories>
 </project>

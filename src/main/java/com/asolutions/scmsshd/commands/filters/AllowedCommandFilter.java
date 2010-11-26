@@ -1,5 +1,5 @@
 package com.asolutions.scmsshd.commands.filters;
 
-public interface IAllowedCommandFilter {
+public interface AllowedCommandFilter {
 
 }

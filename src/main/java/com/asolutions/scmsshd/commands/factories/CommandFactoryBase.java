@@ -1,25 +1,24 @@
 package com.asolutions.scmsshd.commands.factories;
 
-import java.util.Properties;
-
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.NoOpCommand;
+import com.asolutions.scmsshd.commands.filters.BadCommandException;
+import com.asolutions.scmsshd.commands.filters.BadCommandFilter;
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.CommandFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.NoOpCommand;
-import com.asolutions.scmsshd.commands.filters.BadCommandException;
-import com.asolutions.scmsshd.commands.filters.IBadCommandFilter;
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import java.util.Properties;
 
 public class CommandFactoryBase implements CommandFactory {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
-	private IProjectAuthorizer projectAuthorizer;
-	private IBadCommandFilter badCommandFilter;
-	private ISCMCommandFactory scmCommandFactory;
-	private IPathToProjectNameConverter pathToProjectNameConverter;
+	private ProjectAuthorizer projectAuthorizer;
+	private BadCommandFilter badCommandFilter;
+	private SCMCommandFactory scmCommandFactory;
+	private PathToProjectNameConverter pathToProjectNameConverter;
 	private Properties configuration;
 
 	public CommandFactoryBase() {
@@ -37,31 +36,31 @@ public class CommandFactoryBase implements CommandFactory {
 		}
 	}
 
-	public void setProjectAuthorizor(IProjectAuthorizer projectAuthorizer) {
+	public void setProjectAuthorizor(ProjectAuthorizer projectAuthorizer) {
 		this.projectAuthorizer = projectAuthorizer;
 	}
 
-	public void setBadCommandFilter(IBadCommandFilter badCommandFilter) {
+	public void setBadCommandFilter(BadCommandFilter badCommandFilter) {
 		this.badCommandFilter = badCommandFilter;
 	}
 
-	public void setScmCommandFactory(ISCMCommandFactory scmCommandFactory) {
+	public void setScmCommandFactory(SCMCommandFactory scmCommandFactory) {
 		this.scmCommandFactory = scmCommandFactory;
 	}
 
-	public IBadCommandFilter getBadCommandFilter() {
+	public BadCommandFilter getBadCommandFilter() {
 		return this.badCommandFilter;
 	}
 
-	public ISCMCommandFactory getScmCommandFactory() {
+	public SCMCommandFactory getScmCommandFactory() {
 		return this.scmCommandFactory;
 	}
 
-	public void setPathToProjectNameConverter(IPathToProjectNameConverter pathToProjectNameConverter) {
+	public void setPathToProjectNameConverter(PathToProjectNameConverter pathToProjectNameConverter) {
 		this.pathToProjectNameConverter = pathToProjectNameConverter;
 	}
 	
-	public IPathToProjectNameConverter getPathToProjectNameConverter() {
+	public PathToProjectNameConverter getPathToProjectNameConverter() {
 		return pathToProjectNameConverter;
 	}
 

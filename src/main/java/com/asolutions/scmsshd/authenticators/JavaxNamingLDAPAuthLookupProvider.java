@@ -1,24 +1,20 @@
 package com.asolutions.scmsshd.authenticators;
 
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-import javax.naming.ldap.InitialLdapContext;
-import javax.security.auth.login.LoginContext;
-
+import com.asolutions.scmsshd.ldap.LDAPAuthLookupProvider;
+import com.asolutions.scmsshd.ssl.PromiscuousSSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asolutions.scmsshd.ldap.ILDAPAuthLookupProvider;
-import com.asolutions.scmsshd.ssl.PromiscuousSSLSocketFactory;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
+import java.util.Properties;
 
 public class JavaxNamingLDAPAuthLookupProvider implements
-		ILDAPAuthLookupProvider {
+        LDAPAuthLookupProvider {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 
 	public SearchResult provide(String url, String username, String password,

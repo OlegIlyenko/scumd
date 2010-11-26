@@ -1,6 +1,9 @@
 package com.asolutions.scmsshd.ldap;
 
-import static org.junit.Assert.*;
+import com.asolutions.MockTestCase;
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import org.jmock.Expectations;
+import org.junit.Test;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -8,11 +11,7 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
-import org.jmock.Expectations;
-import org.junit.Test;
-
-import com.asolutions.MockTestCase;
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import static org.junit.Assert.*;
 
 
 public class LDAPProjectAuthorizerTest extends MockTestCase {
@@ -25,7 +24,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 	private String userToCheckDN = "cn=" + usernameToCheck + "," + userBaseDN;
 	@Test
 	public void testLookupForProjectSuccess() throws Exception {
-		final IJavaxNamingProvider namingProvider = context.mock(IJavaxNamingProvider.class);
+		final JavaxNamingProvider namingProvider = context.mock(JavaxNamingProvider.class);
 		final InitialDirContext mockBinding = context.mock(InitialDirContext.class);
 		final String groupDN = groupName + "," + groupBaseDN;
 		
@@ -69,7 +68,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 	@Test
 	public void testLookupForProjectSuccessNoSuffix() throws Exception {
 		
-		final IJavaxNamingProvider namingProvider = context.mock(IJavaxNamingProvider.class);
+		final JavaxNamingProvider namingProvider = context.mock(JavaxNamingProvider.class);
 		final InitialDirContext mockBinding = context.mock(InitialDirContext.class);
 		final String groupDN = groupName + "," + groupBaseDN;
 		
@@ -112,7 +111,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 	
 	@Test
 	public void testLookupForProjectNotAMember() throws Exception {
-		final IJavaxNamingProvider namingProvider = context.mock(IJavaxNamingProvider.class);
+		final JavaxNamingProvider namingProvider = context.mock(JavaxNamingProvider.class);
 		final InitialDirContext mockBinding = context.mock(InitialDirContext.class);
 		
 		final Attributes mockAttrs = context.mock(Attributes.class);
@@ -152,7 +151,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
     @Test
 	public void testValidWithValidInfo() throws Exception{
 		
-		final IJavaxNamingProvider namingProvider = context.mock(IJavaxNamingProvider.class);
+		final JavaxNamingProvider namingProvider = context.mock(JavaxNamingProvider.class);
 		final InitialDirContext mockBinding = context.mock(InitialDirContext.class);
 
 		checking(new Expectations(){{
@@ -172,8 +171,8 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 	@Test
 	public void testInvalidWithInvalidInfo() throws Exception{
 		
-		Class<IJavaxNamingProvider> typeToMock = IJavaxNamingProvider.class;
-		final IJavaxNamingProvider namingProvider = context.mock(typeToMock);
+		Class<JavaxNamingProvider> typeToMock = JavaxNamingProvider.class;
+		final JavaxNamingProvider namingProvider = context.mock(typeToMock);
 		final InitialDirContext mockBinding = context.mock(InitialDirContext.class);
 
 		checking(new Expectations(){{

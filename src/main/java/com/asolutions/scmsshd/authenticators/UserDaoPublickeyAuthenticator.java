@@ -34,9 +34,9 @@ public class UserDaoPublickeyAuthenticator extends BaseUserDaoAuthenticator impl
 
             if (log.isDebugEnabled()) {
                 if (success) {
-                    log.debug("User '" + userName + "' was successfully authenticated by public key");
+                    log.debug("User '" + userName + "' was successfully authenticated with public key");
                 } else {
-                    log.warn("User '" + userName + "' failed authentication by public key!");
+                    log.warn("User '" + userName + "' failed authentication with public key!");
                 }
             }
 

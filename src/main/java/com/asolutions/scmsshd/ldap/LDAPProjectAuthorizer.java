@@ -1,18 +1,17 @@
 package com.asolutions.scmsshd.ldap;
 
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
+import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
-import com.asolutions.scmsshd.sshd.UnparsableProjectException;
-
-public class LDAPProjectAuthorizer implements IProjectAuthorizer {
+public class LDAPProjectAuthorizer implements ProjectAuthorizer {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	private String lookupUserDN;
 	private String lookupUserPassword;
@@ -20,7 +19,7 @@ public class LDAPProjectAuthorizer implements IProjectAuthorizer {
 	private String userBaseDN;
 	private String groupSuffix;
 	private AuthorizationLevel authorizationLevel;
-	private IJavaxNamingProvider provider;
+	private JavaxNamingProvider provider;
 
 	public LDAPProjectAuthorizer(String lookupUserDN,
 								 String lookupUserPassword, 
@@ -32,7 +31,7 @@ public class LDAPProjectAuthorizer implements IProjectAuthorizer {
 								 AuthorizationLevel authorizationLevel)
 			throws NamingException {
 		this(lookupUserDN, lookupUserPassword, groupBaseDN,userBaseDN, groupSuffix,
-				new JavaxNamingProvider(url, promiscuous), authorizationLevel);
+				new JavaxNamingProviderImpl(url, promiscuous), authorizationLevel);
 	}
 
 	public LDAPProjectAuthorizer(String lookupUserDN,
@@ -40,7 +39,7 @@ public class LDAPProjectAuthorizer implements IProjectAuthorizer {
 								 String groupBaseDN,
 								 String userBaseDN,
 								 String groupSuffix,
-								 IJavaxNamingProvider provider, 
+								 JavaxNamingProvider provider,
 								 AuthorizationLevel authorizationLevel) throws NamingException {
 		this.lookupUserDN = lookupUserDN;
 		this.lookupUserPassword = lookupUserPassword;
@@ -52,7 +51,7 @@ public class LDAPProjectAuthorizer implements IProjectAuthorizer {
 		getLdapBinding(provider);
 	}
 
-	protected InitialDirContext getLdapBinding(IJavaxNamingProvider provider)
+	protected InitialDirContext getLdapBinding(JavaxNamingProvider provider)
 			throws NamingException {
 		return provider.getBinding(this.lookupUserDN,
 										   this.lookupUserPassword);

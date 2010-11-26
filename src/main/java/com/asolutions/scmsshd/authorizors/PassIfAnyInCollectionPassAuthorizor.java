@@ -1,17 +1,17 @@
 package com.asolutions.scmsshd.authorizors;
 
-import java.util.ArrayList;
-
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
 
-public class PassIfAnyInCollectionPassAuthorizor implements IProjectAuthorizer {
+import java.util.ArrayList;
 
-	private ArrayList<IProjectAuthorizer> authList = new ArrayList<IProjectAuthorizer>();
+public class PassIfAnyInCollectionPassAuthorizor implements ProjectAuthorizer {
+
+	private ArrayList<ProjectAuthorizer> authList = new ArrayList<ProjectAuthorizer>();
 
 	public AuthorizationLevel userIsAuthorizedForProject(String username, String project)
 			throws UnparsableProjectException {
-		for (IProjectAuthorizer auth : authList) {
+		for (ProjectAuthorizer auth : authList) {
 			AuthorizationLevel result = auth.userIsAuthorizedForProject(username, project);
 			if (result != null){
 				return result;

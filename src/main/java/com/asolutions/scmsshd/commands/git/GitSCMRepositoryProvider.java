@@ -1,6 +1,7 @@
 package com.asolutions.scmsshd.commands.git;
 
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class GitSCMRepositoryProvider {
 
         log.info("Accessing Repository: " + pathToRepo.getAbsolutePath());
 
-        Repository repo = new Repository(pathToRepo);
+        Repository repo = new FileRepository(pathToRepo);
 
         if (!pathToRepo.exists()) {
             log.info("Repository does not exists, creating new bare repository: " + pathToRepo.getAbsolutePath());

@@ -1,9 +1,9 @@
 package com.asolutions.scmsshd.authorizors;
 
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
 
-public class AlwaysPassProjectAuthorizer implements IProjectAuthorizer {
+public class AlwaysPassProjectAuthorizer implements ProjectAuthorizer {
 
 	public AuthorizationLevel userIsAuthorizedForProject(String username,
 			String project) throws UnparsableProjectException {

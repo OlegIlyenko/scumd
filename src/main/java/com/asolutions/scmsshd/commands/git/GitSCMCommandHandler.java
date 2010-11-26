@@ -2,24 +2,24 @@ package com.asolutions.scmsshd.commands.git;
 
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
+import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
 import org.apache.sshd.server.ExitCallback;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-public class GitSCMCommandHandler implements ISCMCommandHandler {
+public class GitSCMCommandHandler implements SCMCommandHandler {
 	
-	private ISCMCommandHandler uploadPackHandler;
-	private ISCMCommandHandler receivePackHandler;
+	private SCMCommandHandler uploadPackHandler;
+	private SCMCommandHandler receivePackHandler;
 
     public GitSCMCommandHandler(GitSCMRepositoryProvider repositoryProvider) {
 		this(new GitUploadPackSCMCommandHandler(repositoryProvider), new GitReceivePackSCMCommandHandler(repositoryProvider));
 	}
 
-	public GitSCMCommandHandler(ISCMCommandHandler uploadPackHandler,
-			                    ISCMCommandHandler receivePackHandler) {
+	public GitSCMCommandHandler(SCMCommandHandler uploadPackHandler,
+			                    SCMCommandHandler receivePackHandler) {
 		this.uploadPackHandler = uploadPackHandler;
 		this.receivePackHandler = receivePackHandler;
 	}
@@ -29,7 +29,7 @@ public class GitSCMCommandHandler implements ISCMCommandHandler {
 			OutputStream errorStream, ExitCallback exitCallback, 
 			Properties configuration,
 			AuthorizationLevel authorizationLevel) {
-		ISCMCommandHandler handler = null;
+		SCMCommandHandler handler = null;
 		if ("git-upload-pack".equals(filteredCommand.getCommand())){
 			handler = uploadPackHandler;
 		}

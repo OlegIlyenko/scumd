@@ -1,16 +1,14 @@
 package com.asolutions.scmsshd.authenticators;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.ArrayList;
-
+import com.asolutions.MockTestCase;
 import org.apache.sshd.server.session.ServerSession;
 import org.jmock.Expectations;
 import org.junit.Test;
 
-import com.asolutions.MockTestCase;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 
 public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
@@ -27,8 +25,8 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 	@Test
 	public void testPassIfAnyPass() throws Exception {
 
-		final IPasswordAuthenticator failsAuth = context.mock(IPasswordAuthenticator.class, "failsAuth");
-		final IPasswordAuthenticator passesAuth = context.mock(IPasswordAuthenticator.class, "passesAuth");
+		final PasswordAuthenticator failsAuth = context.mock(PasswordAuthenticator.class, "failsAuth");
+		final PasswordAuthenticator passesAuth = context.mock(PasswordAuthenticator.class, "passesAuth");
 		final ServerSession mockServerSession = context.mock(ServerSession.class);
 		
 		checking(new Expectations(){{
@@ -49,7 +47,7 @@ public class PassIfAnyInCollectionPassAuthenticatorTest extends MockTestCase {
 	
 	@Test
 	public void testFailIfNonePass() throws Exception {
-		final IPasswordAuthenticator failsAuth = context.mock(IPasswordAuthenticator.class, "failsAuth");
+		final PasswordAuthenticator failsAuth = context.mock(PasswordAuthenticator.class, "failsAuth");
 		final ServerSession mockServerSession = context.mock(ServerSession.class);
 		
 		checking(new Expectations(){{

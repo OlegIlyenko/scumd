@@ -1,19 +1,18 @@
 package com.asolutions.scmsshd.commands.factories;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Properties;
-
-import org.jmock.Expectations;
-import org.junit.Test;
-
 import com.asolutions.MockTestCase;
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.commands.NoOpCommand;
 import com.asolutions.scmsshd.commands.filters.BadCommandException;
-import com.asolutions.scmsshd.commands.filters.IBadCommandFilter;
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import com.asolutions.scmsshd.commands.filters.BadCommandFilter;
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
+import org.jmock.Expectations;
+import org.junit.Test;
+
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
 
 public class CommandFactoryBaseTest  extends MockTestCase {
 	
@@ -22,7 +21,7 @@ public class CommandFactoryBaseTest  extends MockTestCase {
 	
 	@Test
 	public void testBadCommandReturnsNoOp() throws Exception {
-		final IBadCommandFilter mockBadCommandFilter = context.mock(IBadCommandFilter.class);
+		final BadCommandFilter mockBadCommandFilter = context.mock(BadCommandFilter.class);
 		checking(new Expectations(){{
 			one(mockBadCommandFilter).filterOrThrow(COMMAND);
 			will(throwException(new BadCommandException()));
@@ -35,11 +34,11 @@ public class CommandFactoryBaseTest  extends MockTestCase {
 	
 	@Test
 	public void testChecksBadCommandFirst() throws Exception {
-		final IBadCommandFilter mockBadCommandFilter = context.mock(IBadCommandFilter.class);
+		final BadCommandFilter mockBadCommandFilter = context.mock(BadCommandFilter.class);
 		final FilteredCommand filteredCommand = new FilteredCommand(COMMAND, ARGUMENT);
-		final ISCMCommandFactory mockScmCommandFactory = context.mock(ISCMCommandFactory.class);
-		final IProjectAuthorizer mockProjAuth = context.mock(IProjectAuthorizer.class);
-		final IPathToProjectNameConverter mockPathConverter = context.mock(IPathToProjectNameConverter.class);
+		final SCMCommandFactory mockScmCommandFactory = context.mock(SCMCommandFactory.class);
+		final ProjectAuthorizer mockProjAuth = context.mock(ProjectAuthorizer.class);
+		final PathToProjectNameConverter mockPathConverter = context.mock(PathToProjectNameConverter.class);
 		final Properties mockConfig = context.mock(Properties.class);
 		
 		checking(new Expectations(){{

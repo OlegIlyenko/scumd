@@ -5,7 +5,7 @@ import com.asolutions.scmsshd.dao.UserDao;
 import com.asolutions.scmsshd.model.security.Privilege;
 import com.asolutions.scmsshd.model.security.User;
 import com.asolutions.scmsshd.service.RepositoryAclService;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * @author Oleg Ilyenko
  */
-public class RepositoryAclProjectAuthorizer implements IProjectAuthorizer {
+public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 

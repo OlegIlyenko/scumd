@@ -1,10 +1,11 @@
 package com.asolutions.scmsshd.commands.git;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
+import com.asolutions.scmsshd.sshd.UnparsableProjectException;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
@@ -13,12 +14,10 @@ import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
-import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class SCMCommand implements Command, SessionAware{
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -29,9 +28,9 @@ public class SCMCommand implements Command, SessionAware{
 	private ExitCallback exitCallback;
 	private ServerSession session;
 	private FilteredCommand filteredCommand;
-	private IProjectAuthorizer projectAuthorizer;
-	private IPathToProjectNameConverter pathToProjectNameConverter;
-	private ISCMCommandHandler sCMCommandHandler;
+	private ProjectAuthorizer projectAuthorizer;
+	private PathToProjectNameConverter pathToProjectNameConverter;
+	private SCMCommandHandler sCMCommandHandler;
 	private Properties configuration;
 	
 	public SCMCommand() {
@@ -95,27 +94,27 @@ public class SCMCommand implements Command, SessionAware{
 		return filteredCommand;
 	}
 
-	public void setProjectAuthorizer(IProjectAuthorizer projectAuthenticator) {
+	public void setProjectAuthorizer(ProjectAuthorizer projectAuthenticator) {
 		this.projectAuthorizer = projectAuthenticator;
 	}
 	
-	public IProjectAuthorizer getProjectAuthorizer() {
+	public ProjectAuthorizer getProjectAuthorizer() {
 		return projectAuthorizer;
 	}
 	
-	public void setPathToProjectNameConverter(IPathToProjectNameConverter pathToProjectNameConverter) {
+	public void setPathToProjectNameConverter(PathToProjectNameConverter pathToProjectNameConverter) {
 		this.pathToProjectNameConverter = pathToProjectNameConverter;
 	}
 	
-	public IPathToProjectNameConverter getPathToProjectNameConverter() {
+	public PathToProjectNameConverter getPathToProjectNameConverter() {
 		return pathToProjectNameConverter;
 	}
 	
-	public void setSCMCommandHandler(ISCMCommandHandler sCMCommandHandler) {
+	public void setSCMCommandHandler(SCMCommandHandler sCMCommandHandler) {
 		this.sCMCommandHandler = sCMCommandHandler;
 	}
 	
-	public ISCMCommandHandler getSCMCommandHandler() {
+	public SCMCommandHandler getSCMCommandHandler() {
 		return sCMCommandHandler;
 	}
 

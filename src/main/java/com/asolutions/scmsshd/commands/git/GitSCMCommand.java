@@ -1,22 +1,22 @@
 package com.asolutions.scmsshd.commands.git;
 
 import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 
 import java.util.Properties;
 
 public class GitSCMCommand extends SCMCommand {
 
 	public GitSCMCommand(FilteredCommand filteredCommand,
-						 IProjectAuthorizer projectAuthorizer, 
-						 IPathToProjectNameConverter pathToProjectNameConverter, Properties configuration) {
+						 ProjectAuthorizer projectAuthorizer,
+						 PathToProjectNameConverter pathToProjectNameConverter, Properties configuration) {
 		this(filteredCommand, projectAuthorizer, pathToProjectNameConverter, configuration, null);
 	}
 
     public GitSCMCommand(FilteredCommand filteredCommand,
-						 IProjectAuthorizer projectAuthorizer,
-						 IPathToProjectNameConverter pathToProjectNameConverter,
+						 ProjectAuthorizer projectAuthorizer,
+						 PathToProjectNameConverter pathToProjectNameConverter,
                          Properties configuration,
                          GitSCMRepositoryProvider repositoryProvider) {
 		setFilteredCommand(filteredCommand);

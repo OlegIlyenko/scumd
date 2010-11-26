@@ -1,12 +1,12 @@
 package com.asolutions.scmsshd.commands.filters.git;
 
-import java.util.regex.Pattern;
-
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.commands.filters.BadCommandException;
-import com.asolutions.scmsshd.commands.filters.IBadCommandFilter;
+import com.asolutions.scmsshd.commands.filters.BadCommandFilter;
 
-public class GitBadCommandFilter implements IBadCommandFilter {
+import java.util.regex.Pattern;
+
+public class GitBadCommandFilter implements BadCommandFilter {
 	
 //	private static final Pattern commandFilter = Pattern.compile("^'/*(?P<path>[a-zA-Z0-9][a-zA-Z0-9@._-]*(/[a-zA-Z0-9][a-zA-Z0-9@._-]*)*)'$");
 	private static final String commandFilter = "^'.+'$";

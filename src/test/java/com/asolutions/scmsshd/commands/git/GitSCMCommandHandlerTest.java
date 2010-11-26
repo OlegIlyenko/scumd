@@ -1,21 +1,16 @@
 package com.asolutions.scmsshd.commands.git;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
+import com.asolutions.MockTestCase;
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
 import org.apache.sshd.server.ExitCallback;
 import org.jmock.Expectations;
 import org.junit.Test;
 
-import com.asolutions.MockTestCase;
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
-import com.asolutions.scmsshd.exceptions.Failure;
-import com.asolutions.scmsshd.exceptions.MustHaveWritePrivilagesToPushFailure;
-
-import static org.junit.Assert.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class GitSCMCommandHandlerTest extends MockTestCase {
 	
@@ -26,8 +21,8 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final OutputStream mockOutputStream = context.mock(OutputStream.class, "mockOutputStream");
 		final OutputStream mockErrorStream = context.mock(OutputStream.class, "mockErrorStream");
 		final ExitCallback mockExitCallback = context.mock(ExitCallback.class);
-		final ISCMCommandHandler mockUploadPackHandler = context.mock(ISCMCommandHandler.class, "mockUploadPackHandler");
-		final ISCMCommandHandler mockFetchPackHandler = context.mock(ISCMCommandHandler.class, "mockFetchPackHandler");
+		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
+		final SCMCommandHandler mockFetchPackHandler = context.mock(SCMCommandHandler.class, "mockFetchPackHandler");
 		
 		final Properties mockProperties = context.mock(Properties.class);
 		
@@ -46,8 +41,8 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final OutputStream mockOutputStream = context.mock(OutputStream.class, "mockOutputStream");
 		final OutputStream mockErrorStream = context.mock(OutputStream.class, "mockErrorStream");
 		final ExitCallback mockExitCallback = context.mock(ExitCallback.class);
-		final ISCMCommandHandler mockUploadPackHandler = context.mock(ISCMCommandHandler.class, "mockUploadPackHandler");
-		final ISCMCommandHandler mockFetchPackHandler = context.mock(ISCMCommandHandler.class, "mockFetchPackHandler");
+		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
+		final SCMCommandHandler mockFetchPackHandler = context.mock(SCMCommandHandler.class, "mockFetchPackHandler");
 		
 		final Properties mockProperties = context.mock(Properties.class);
 
@@ -66,8 +61,8 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final OutputStream mockOutputStream = context.mock(OutputStream.class, "mockOutputStream");
 		final OutputStream mockErrorStream = context.mock(OutputStream.class, "mockErrorStream");
 		final ExitCallback mockExitCallback = context.mock(ExitCallback.class);
-		final ISCMCommandHandler mockUploadPackHandler = context.mock(ISCMCommandHandler.class, "mockUploadPackHandler");
-		final ISCMCommandHandler mockReceivePackHandler = context.mock(ISCMCommandHandler.class, "mockReceivePackHandler");
+		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
+		final SCMCommandHandler mockReceivePackHandler = context.mock(SCMCommandHandler.class, "mockReceivePackHandler");
 		final Properties mockProperties = context.mock(Properties.class);
 		
 		checking(new Expectations(){{

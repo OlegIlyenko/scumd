@@ -1,24 +1,23 @@
 package com.asolutions.scmsshd.commands.git;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
+import com.asolutions.MockTestCase;
+import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
+import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import org.apache.sshd.server.ExitCallback;
 import org.apache.sshd.server.session.ServerSession;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.asolutions.MockTestCase;
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
-import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.IProjectAuthorizer;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class SCMCommandTest extends MockTestCase {
 
@@ -26,9 +25,9 @@ public class SCMCommandTest extends MockTestCase {
 	private static final String PROJECT = "proj-2";
 	
 	private FilteredCommand filteredCommand;
-	private IProjectAuthorizer mockProjectAuthorizer;
+	private ProjectAuthorizer mockProjectAuthorizer;
 	private ServerSession mockSession;
-	private IPathToProjectNameConverter mockPathToProjectConverter;
+	private PathToProjectNameConverter mockPathToProjectConverter;
 	private ExitCallback mockExitCallback;
 	
 	private SCMCommand command = new SCMCommand();
@@ -40,9 +39,9 @@ public class SCMCommandTest extends MockTestCase {
 	@Before
 	public void setup() {
 		filteredCommand = new FilteredCommand("git-upload-pack", "/proj-2");
-		mockProjectAuthorizer = context.mock(IProjectAuthorizer.class);
+		mockProjectAuthorizer = context.mock(ProjectAuthorizer.class);
 		mockSession = context.mock(ServerSession.class);
-		mockPathToProjectConverter = context.mock(IPathToProjectNameConverter.class);
+		mockPathToProjectConverter = context.mock(PathToProjectNameConverter.class);
 		mockExitCallback = context.mock(ExitCallback.class);
 		mockInputStream = context.mock(InputStream.class);
 		mockOutputStream = context.mock(OutputStream.class);
@@ -109,7 +108,7 @@ public class SCMCommandTest extends MockTestCase {
 
 	@Test
 	public void testAuthorizerPassing() throws Exception {
-		final ISCMCommandHandler mockSCMCommandHandler = context.mock(ISCMCommandHandler.class);
+		final SCMCommandHandler mockSCMCommandHandler = context.mock(SCMCommandHandler.class);
 		checking(new Expectations() {{
 			one(mockSession).getUsername();
 			will(returnValue(USERNAME));

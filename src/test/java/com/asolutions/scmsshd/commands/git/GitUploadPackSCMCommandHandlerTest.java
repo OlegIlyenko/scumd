@@ -1,21 +1,19 @@
 package com.asolutions.scmsshd.commands.git;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
-import org.apache.sshd.server.ExitCallback;
-import org.jmock.Expectations;
-import org.junit.Test;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.transport.UploadPack;
-
 import com.asolutions.MockTestCase;
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
 import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
-import com.asolutions.scmsshd.commands.handlers.ISCMCommandHandler;
+import org.apache.sshd.server.ExitCallback;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.transport.UploadPack;
+import org.jmock.Expectations;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Properties;
 
 public class GitUploadPackSCMCommandHandlerTest extends MockTestCase {
 

@@ -1,18 +1,15 @@
 package com.asolutions.scmsshd.authenticators;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
+import com.asolutions.MockTestCase;
+import com.asolutions.scmsshd.ldap.LDAPAuthLookupProvider;
 import org.apache.sshd.server.session.ServerSession;
 import org.jmock.Expectations;
 import org.junit.Test;
 
-import com.asolutions.MockTestCase;
-import com.asolutions.scmsshd.ldap.ILDAPAuthLookupProvider;
-
 import javax.naming.directory.SearchResult;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class LDAPAuthenticatorTest extends MockTestCase {
@@ -25,7 +22,7 @@ public class LDAPAuthenticatorTest extends MockTestCase {
 
 	@Test
 	public void testAuthenticatePassesWithNoException() throws Exception {
-		final ILDAPAuthLookupProvider mockAuthLookupProvider = context.mock(ILDAPAuthLookupProvider.class);
+		final LDAPAuthLookupProvider mockAuthLookupProvider = context.mock(LDAPAuthLookupProvider.class);
 		final ServerSession mockServerSession = context.mock(ServerSession.class);
         final SearchResult mockSearchResult = context.mock(SearchResult.class);
 		checking(new Expectations(){{
@@ -40,7 +37,7 @@ public class LDAPAuthenticatorTest extends MockTestCase {
 	
 	@Test
 	public void testAuthenticateFailsNull() throws Exception {
-		final ILDAPAuthLookupProvider mockAuthLookupProvider = context.mock(ILDAPAuthLookupProvider.class);
+		final LDAPAuthLookupProvider mockAuthLookupProvider = context.mock(LDAPAuthLookupProvider.class);
 		final ServerSession mockServerSession = context.mock(ServerSession.class);
 		
 		checking(new Expectations(){{

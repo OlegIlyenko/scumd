@@ -1,12 +1,12 @@
 package com.asolutions.scmsshd.converters.path.regexp;
 
+import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
+import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.asolutions.scmsshd.converters.path.IPathToProjectNameConverter;
-import com.asolutions.scmsshd.sshd.UnparsableProjectException;
-
-public abstract class AMatchingGroupPathToProjectNameConverter implements IPathToProjectNameConverter{
+public abstract class AMatchingGroupPathToProjectNameConverter implements PathToProjectNameConverter {
 
 	public AMatchingGroupPathToProjectNameConverter() {
 		super();
