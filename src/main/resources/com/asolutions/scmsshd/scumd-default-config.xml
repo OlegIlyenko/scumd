@@ -39,6 +39,16 @@
         -->
         <default-server-key-pair />
 
+        <!-- You can also define server-specific listeners -->
+        <!--
+        <listeners>
+            ...
+        </listeners>
+
+        <listeners />
+        -->
+
+
     </git-ssh-server>
 
     <!--
@@ -91,6 +101,185 @@
                               num-tests-per-eviction-run="2"
                               max-open-prepared-statements="20" />
     </database-user-dao-acl>
+    -->
+
+    <!--
+        Listeners will listen for server events and react on them.
+        You can filter events with these elements:
+            * not
+            * file
+            * repo
+            * user
+            * group
+            * author
+        You can use following listeners:
+            * email
+            * push-log
+            * access-log
+            * cancel
+            * beans:bean
+    -->
+    <!--
+    <listeners>
+    -->
+        <!-- Filters -->
+
+        <!-- negatives result of it's sub-filters -->
+        <!--
+        <not>
+            <repo>
+                <includes>private/*.git</includes>
+            </repo>
+            <file includes="**/*.java" excludes="org/**/*.java" />
+        </not>
+        -->
+
+        <!--
+            Filters by file existence in push, commit or file change events.
+            includes/excludes are ANT-like path. You can also define them as attributes
+        -->
+        <!--
+        <file>
+            <includes>**/*.java</includes>
+            <excludes>org/**/*.java</excludes>
+        </file>
+        -->
+
+        <!--
+            Filters by repository during repository-related events.
+            includes/excludes are ANT-like path. You can also define them as inner elements
+        -->
+        <!--
+        <repo includes="/public/*.git" excludes="/*/secret.git" />
+        -->
+
+        <!-- Filtering by user. Can be either user name or email -->
+        <!--
+        <user>user1, user2</user>
+        -->
+
+        <!-- Filtering by user's group name -->
+        <!--
+        <group>g1, group2</group>
+        -->
+
+        <!-- Filtering by author of the commit. Can be either user name or email -->
+        <!--
+        <author>author1, author2@email.com</author>
+        -->
+
+        <!-- Listeners -->
+
+        <!--
+            Email listener will send emails to provided email/users/groups(all users in each group) when event is triggered.
+            Each configuration element can be defined either as attribute or inner tag.
+
+            event attribute can have following values:
+                * authenticationSuccess
+                * authenticationFail
+                * authorizationSucces
+                * authorizationFail
+                * repoCreate
+                * pull
+                * push
+                * commit
+
+            Note: If you want to use email listeners, you should also define <email-sender /> tag.
+        -->
+        <!--
+        <email event="push" emails="mu@email.com, hello@world.com" subject="My Notification!">
+            <users>u1, u2</users>
+            <groups>g1, g2</groups>
+        </email>
+        -->
+
+        <!--
+            Will log all push requests to the provided log file with
+            full information about all commits and committed files.
+        -->
+        <!--
+        <push-log path="/path/to/my-push.log"
+                  max-backup-index="10"
+                  max-file-size="20MB"
+                  pattern="%d %m%n" />
+        -->
+
+        <!--
+            Will log all authentication and authorization requests to the provided log.
+        -->
+        <!--
+        <access-log path="/path/to/my-push.log"
+                    max-backup-index="10"
+                    max-file-size="20MB"
+                    pattern="%d %m%n" />
+        -->
+
+        <!--
+            This listener will cancel correspondent event.
+            You can use it together with filters in order restrict access for example.
+            Event can be provided through event attribute (predefined values) or event-class
+
+            Supported values for event attribute:
+                * authentication
+                * authorization
+                * repoCreate
+                * pull
+                * push
+                * commit
+        -->
+        <!--
+        <cancel event="push" event-class="com.asolutions.scmsshd.event.PushEvent" />
+        -->
+
+        <!--
+            And of course you can create your own listeners and add them as standard spring beans!
+
+            Listener class is simple pojo that has methods for event handling like this:
+
+                public void onEvent(AuthorizationFailEvent event) {}
+
+            in this case it will be triggered only on AuthorizationFailEvent.
+            You can have more than one handler method in the same class.
+
+            You can annotate first parameter with following annotations
+            in order to trigger listener before or after event (by default listener is triggered at Post stage):
+                * com.asolutions.scmsshd.event.Pre
+                * com.asolutions.scmsshd.event.Post
+
+            here is an example:
+                public void onEvent(@Pre AuthorizationEvent event) {
+                    throw new CancelEventException("Nobody is allowed to access my precious repos!");
+                }
+
+            In @Pre events you can also throw com.asolutions.scmsshd.event.CancelEventException
+            in order to cancel correspondent action.
+
+            You can also define method that returns instance of 'Support' class.
+            This will restrict listener triggering even more:
+
+                public Support supports() {
+                    return SupportBuilder.builder()
+                            .repo("**/*.git", "private/*.git")
+                            .not().user("userName")
+                            .build();
+                }
+        -->
+        <!--
+        <beans:bean class="org.my.personal.SuperEventListener" />
+        -->
+    <!--
+    </listeners>
+    -->
+
+    <!--
+        If you are using email listeners, you should also define email-sender
+        in order to define SMTP/SMTPS configuration
+    -->
+    <!--
+    <email-sender host="my.host" protocol="smtps"
+                  user="mailsUser" password="secret"
+                  from="git@admin.com"
+                  force-email="oi.is.test@gmail.com" disable="true" />
     -->
 
     <!--
