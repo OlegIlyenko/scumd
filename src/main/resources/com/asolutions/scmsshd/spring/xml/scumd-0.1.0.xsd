@@ -36,6 +36,7 @@
                         <xsd:element name="simple-server-key-pair" type="SimpleKeyPairProvider" minOccurs="0"/>
                         <xsd:element name="file-user-dao-acl" type="UserDaoAclFile" minOccurs="0"/>
                         <xsd:element name="database-user-dao-acl" type="DatabaseUserDaoAcl" minOccurs="0"/>
+                        <xsd:element name="listeners" type="Listener" minOccurs="0"/>
                     </xsd:choice>
 
                     <xsd:attribute name="port" type="xsd:integer" use="required">
@@ -62,6 +63,18 @@
                         </xsd:annotation>
                     </xsd:attribute>
 
+                    <xsd:attribute name="allow-caching" type="xsd:boolean" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>Is caching allowed for the repositories (by default true)</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
+                    <xsd:attribute name="max-files-pro-event" type="xsd:integer" use="optional">
+                        <xsd:annotation>
+                            <xsd:documentation>How many file events push and commit events are allowed to hold (default 2000)</xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
                     <xsd:attribute name="user-dao-acl-ref" type="xsd:string"/>
                 </xsd:extension>
             </xsd:complexContent>
@@ -79,6 +92,10 @@
     <xsd:element name="file-user-dao-acl" type="UserDaoAclFile"/>
 
     <xsd:element name="database-user-dao-acl" type="DatabaseUserDaoAcl"/>
+
+    <xsd:element name="listeners" type="Listener" />
+
+    <xsd:element name="email-sender" type="EmailSender" />
 
     <!-- Type definition -->
 
@@ -126,6 +143,7 @@
                 <xsd:attribute name="expire" type="xsd:date"/>
                 <xsd:attribute name="active" type="xsd:boolean" default="true"/>
                 <xsd:attribute name="groups" type="xsd:string"/>
+                <xsd:attribute name="email" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -235,6 +253,116 @@
             <xsd:enumeration value="none"/>
             <xsd:enumeration value="md5"/>
             <xsd:enumeration value="sha1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="PathBasedSupport">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="includes" maxOccurs="1" />
+            <xsd:element name="excludes" maxOccurs="1" />
+        </xsd:choice>
+        <xsd:attribute name="includes" type="xsd:string" use="optional"/>
+        <xsd:attribute name="excludes" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="SupportContainer">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="not" type="SupportContainer" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="file" type="PathBasedSupport" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="repo" type="PathBasedSupport" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="user" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="group" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="author" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="Listener">
+        <xsd:complexContent>
+            <xsd:extension base="SupportContainer">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="email" type="EmailListener" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="push-log" type="LogListener" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="access-log" type="LogListener" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="cancel" type="CancelListener" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element ref="beans:bean" />
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="EmailListener">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="subject" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="emails" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="users" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="groups" minOccurs="0" maxOccurs="1"/>
+        </xsd:choice>
+        <xsd:attribute name="emails" type="xsd:string" use="optional"/>
+        <xsd:attribute name="users" type="xsd:string" use="optional"/>
+        <xsd:attribute name="groups" type="xsd:string" use="optional"/>
+
+        <xsd:attribute name="subject" type="xsd:string" use="optional"/>
+        <xsd:attribute name="event" type="EmailEventType" use="required"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="EmailSender">
+        <xsd:attribute name="disable" type="xsd:boolean" use="optional"/>
+        <xsd:attribute name="host" type="xsd:string" use="required"/>
+        <xsd:attribute name="port" type="xsd:int" use="optional"/>
+        <xsd:attribute name="protocol" type="EmailProtocol" use="optional"/>
+        <xsd:attribute name="auth" type="xsd:boolean" use="optional"/>
+        <xsd:attribute name="user" type="xsd:string" use="optional"/>
+        <xsd:attribute name="password" type="xsd:string" use="optional"/>
+        <xsd:attribute name="from" type="xsd:string" use="required"/>
+        <xsd:attribute name="replay-to" type="xsd:string" use="optional"/>
+        <xsd:attribute name="force-email" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="LogListener">
+        <xsd:attribute name="path" type="xsd:string" use="optional"/>
+        <xsd:attribute name="max-file-size" type="xsd:string" use="optional"/>
+        <xsd:attribute name="max-backup-index" type="xsd:string" use="optional"/>
+        <xsd:attribute name="pattern" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="CancelListener">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="event" type="EventType" use="optional"/>
+                <xsd:attribute name="event-class" type="xsd:string" use="optional"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="EventType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="authentication"/>
+            <xsd:enumeration value="authorization"/>
+            <xsd:enumeration value="repoCreate"/>
+            <xsd:enumeration value="pull"/>
+            <xsd:enumeration value="push"/>
+            <xsd:enumeration value="commit"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="EmailEventType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="authenticationSuccess"/>
+            <xsd:enumeration value="authenticationFail"/>
+            <xsd:enumeration value="authorizationSuccess"/>
+            <xsd:enumeration value="authorizationFail"/>
+            <xsd:enumeration value="repoCreate"/>
+            <xsd:enumeration value="pull"/>
+            <xsd:enumeration value="push"/>
+            <xsd:enumeration value="commit"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:simpleType name="EmailProtocol">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="smtp"/>
+            <xsd:enumeration value="smtps"/>
         </xsd:restriction>
     </xsd:simpleType>
 

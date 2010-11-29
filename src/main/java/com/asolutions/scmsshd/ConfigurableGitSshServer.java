@@ -11,8 +11,16 @@ import com.asolutions.scmsshd.converters.path.regexp.ConfigurablePathToProjectCo
 import com.asolutions.scmsshd.dao.DaoHolder;
 import com.asolutions.scmsshd.dao.RepositoryAclDao;
 import com.asolutions.scmsshd.dao.UserDao;
+import com.asolutions.scmsshd.event.CancelEventException;
+import com.asolutions.scmsshd.event.impl.GitServerStartEventImpl;
+import com.asolutions.scmsshd.event.impl.GitServerStopEventImpl;
+import com.asolutions.scmsshd.event.listener.DefaultEventDispatcher;
+import com.asolutions.scmsshd.event.listener.EventDispatcher;
+import com.asolutions.scmsshd.event.listener.UncheckedListener;
 import com.asolutions.scmsshd.service.RepositoryAclService;
 import com.asolutions.scmsshd.service.impl.SimpleRepositoryAclService;
+import com.asolutions.scmsshd.spring.xml.ObjectHolder;
+import com.asolutions.scmsshd.util.Function;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.Compression;
 import org.apache.sshd.common.KeyPairProvider;
@@ -21,33 +29,50 @@ import org.apache.sshd.common.compression.CompressionNone;
 import org.apache.sshd.common.util.SecurityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.naming.NamingException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
+
+import static com.asolutions.scmsshd.event.listener.EventDispatcher.Stage.Post;
+import static com.asolutions.scmsshd.event.listener.EventDispatcher.Stage.Pre;
 
 /**
  * @author Oleg Ilyenko
  */
-public class ConfigurableGitSshServer implements InitializingBean {
+public class ConfigurableGitSshServer implements InitializingBean, DisposableBean {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private int port;
 
+    private String repositoriesDir;
+
     private UserDao userDao;
 
     private RepositoryAclDao repositoryAclDao;
-
-    private String repositoriesDir;
 
     private KeyPairProvider serverKeyPairProvider;
 
     private RepositoryAclService repositoryAclService;
 
     private DaoHolder daoHolder;
+
+    private EventDispatcher eventDispatcher = new DefaultEventDispatcher();
+
+    private SshServer sshd;
+
+    private int filesProEventLimit = 2000;
+
+    private boolean allowCaching = true;
+
+    private List<UncheckedListener> listeners;
+
+    private ObjectHolder<List<List<UncheckedListener>>> globalListeners;
 
     public int getPort() {
         return port;
@@ -81,6 +106,46 @@ public class ConfigurableGitSshServer implements InitializingBean {
         this.daoHolder = daoHolder;
     }
 
+    public EventDispatcher getEventDispatcher() {
+        return eventDispatcher;
+    }
+
+    public void setEventDispatcher(EventDispatcher eventDispatcher) {
+        this.eventDispatcher = eventDispatcher;
+    }
+
+    public int getFilesProEventLimit() {
+        return filesProEventLimit;
+    }
+
+    public void setFilesProEventLimit(int filesProEventLimit) {
+        this.filesProEventLimit = filesProEventLimit;
+    }
+
+    public boolean isAllowCaching() {
+        return allowCaching;
+    }
+
+    public void setAllowCaching(boolean allowCaching) {
+        this.allowCaching = allowCaching;
+    }
+
+    public List<UncheckedListener> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<UncheckedListener> listeners) {
+        this.listeners = listeners;
+    }
+
+    public ObjectHolder<List<List<UncheckedListener>>> getGlobalListeners() {
+        return globalListeners;
+    }
+
+    public void setGlobalListeners(ObjectHolder<List<List<UncheckedListener>>> globalListeners) {
+        this.globalListeners = globalListeners;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         userDao = daoHolder.getUserDao();
@@ -91,7 +156,7 @@ public class ConfigurableGitSshServer implements InitializingBean {
         SecurityUtils.setRegisterBouncyCastle(true);
 
         final SshServer sshd = SshServer.setUpDefaultServer();
-        GitSCMRepositoryProvider repositoryProvider = new GitSCMRepositoryProvider("");
+        GitSCMRepositoryProvider repositoryProvider = new GitSCMRepositoryProvider();
 
         sshd.setPort(port);
         setCommandFactory(sshd, repositoryProvider);
@@ -99,22 +164,62 @@ public class ConfigurableGitSshServer implements InitializingBean {
         sshd.setCompressionFactories(Arrays.<NamedFactory<Compression>>asList(new CompressionNone.Factory()));
 
         setupAuthenticators(sshd);
+        setupListeners(eventDispatcher, listeners);
+        setupListenerList(eventDispatcher, globalListeners.getObject());
 
         try {
             log.info("Starting SSH Server on port " + port + " for serving repositories at: " + repositoriesDir);
-            sshd.start();
+            eventDispatcher.fireEvent(Pre, new GitServerStartEventImpl(this));
+            this.sshd = sshd;
+            this.sshd.start();
+            eventDispatcher.fireEvent(Post, new GitServerStartEventImpl(this));
+        } catch (CancelEventException e) {
+            log.error("Aborting because listener cancelled it: \n" + e.getContextInfo());
+            destroy();
         } catch (Exception e) {
             log.error("Aborting because of exceptoin.", e);
-            sshd.stop();
+            destroy();
         } catch (Throwable e) {
             log.error("Aborting because of exceptoin.", e);
-            sshd.stop();
+            destroy();
+        }
+    }
+
+    private void setupListenerList(EventDispatcher eventDispatcher, List<List<UncheckedListener>> listenersList) {
+        if (listenersList != null) {
+            for (List<UncheckedListener> listener : listenersList) {
+                if (listener != null && listener.size() > 0) {
+                    setupListeners(eventDispatcher, listener);
+                }
+            }
+        }
+    }
+
+    private void setupListeners(EventDispatcher eventDispatcher, List<UncheckedListener> listeners) {
+        for (UncheckedListener listener : listeners) {
+            eventDispatcher.addListener(listener);
+        }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (sshd != null) {
+            log.info("Stoppeing SSH Server.");
+            eventDispatcher.fireEvent(Pre, new GitServerStopEventImpl(this));
+            sshd.stop(true);
+            eventDispatcher.fireEvent(Post, new GitServerStopEventImpl(this));
         }
     }
 
     private void setupAuthenticators(SshServer sshd) {
-        sshd.setPasswordAuthenticator(new UserDaoPasswordAuthenticator(userDao));
-        sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao));
+        Function<InteractionContext> contextProvider = new Function<InteractionContext>() {
+            public InteractionContext apply() {
+                return new InteractionContext(ConfigurableGitSshServer.this, eventDispatcher, filesProEventLimit, allowCaching);
+            }
+        };
+
+        sshd.setPasswordAuthenticator(new UserDaoPasswordAuthenticator(userDao, contextProvider));
+        sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao, contextProvider));
     }
 
     private void setCommandFactory(SshServer sshd, GitSCMRepositoryProvider repositoryProvider) throws NamingException {

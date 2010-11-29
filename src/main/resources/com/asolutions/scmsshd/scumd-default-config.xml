@@ -165,7 +165,7 @@
 
         <group name="generic-group-1" />
 
-        <!-- Group list can be also provided through attribute and public key can be inline -->
+        <!-- Group list can be also provided through attribute and public keqy can be inline -->
         <!--
         <user name="user6" groups="generic-group-1, public">
             <public-key>

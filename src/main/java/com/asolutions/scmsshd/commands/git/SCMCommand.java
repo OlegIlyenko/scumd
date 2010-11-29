@@ -2,6 +2,7 @@ package com.asolutions.scmsshd.commands.git;
 
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.CommandContext;
 import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
 import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
 import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
@@ -127,26 +128,27 @@ public class SCMCommand implements Command, SessionAware{
 		}.start();
 	}
 	
-	protected void runImpl()
-	{
+	protected void runImpl() {
 		try {
 			String argument = filteredCommand.getArgument();
 			String project = pathToProjectNameConverter.convert(argument);
-			String username = getUsername();
-			AuthorizationLevel result = projectAuthorizer.userIsAuthorizedForProject(username, project);
-			if (result != null)
-			{
-				sCMCommandHandler.execute(filteredCommand, 
-										  getInputStream(), 
-										  getOutputStream(), 
-										  getErrorStream(), 
-										  getExitCallback(),
-										  getConfiguration(),
-										  result);
-			}
-			else
-			{
-				getExitCallback().onExit(1);
+			String userName = getUsername();
+            AuthorizationLevel result = projectAuthorizer.userIsAuthorizedForProject(userName, project, getSession());
+			if (result != null) {
+                sCMCommandHandler.execute(
+                    new CommandContext(
+                        filteredCommand,
+                        getInputStream(),
+                        getOutputStream(),
+                        getErrorStream(),
+                        getExitCallback(),
+                        getConfiguration(),
+                        getSession(),
+                        result
+                    )
+                );
+			} else {
+                getExitCallback().onExit(1);
 			}
 		} catch (UnparsableProjectException e) {
 			log.error("Error running impl" , e);

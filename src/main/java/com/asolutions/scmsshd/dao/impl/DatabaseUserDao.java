@@ -112,6 +112,7 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
             User user = new User();
 
             user.setName(rs.getString("name"));
+            user.setEmail(rs.getString("email"));
             user.setActive(Boolean.valueOf(rs.getString("active")));
             user.setExpirationDate(rs.getDate("expire"));
 

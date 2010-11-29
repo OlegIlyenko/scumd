@@ -3,6 +3,7 @@ package com.asolutions.scmsshd.commands.git;
 import com.asolutions.MockTestCase;
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.CommandContext;
 import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
 import com.asolutions.scmsshd.converters.path.PathToProjectNameConverter;
 import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
@@ -109,20 +110,23 @@ public class SCMCommandTest extends MockTestCase {
 	@Test
 	public void testAuthorizerPassing() throws Exception {
 		final SCMCommandHandler mockSCMCommandHandler = context.mock(SCMCommandHandler.class);
+        final ServerSession mockSession = context.mock(ServerSession.class);
+
 		checking(new Expectations() {{
 			one(mockSession).getUsername();
 			will(returnValue(USERNAME));
 			one(mockPathToProjectConverter).convert("/proj-2");
 			will(returnValue(PROJECT));
-			one(mockProjectAuthorizer).userIsAuthorizedForProject(USERNAME, PROJECT);
+			one(mockProjectAuthorizer).userIsAuthorizedForProject(USERNAME, PROJECT, null);
 			will(returnValue(AuthorizationLevel.AUTH_LEVEL_READ_ONLY));
-			one(mockSCMCommandHandler).execute(filteredCommand, 
-											   mockInputStream,
-											   mockOutputStream,
-											   mockErrorStream,
-											   mockExitCallback,
-											   mockConfig,
-											   AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
+            one(mockSCMCommandHandler).execute(new CommandContext(filteredCommand,
+                    mockInputStream,
+                    mockOutputStream,
+                    mockErrorStream,
+                    mockExitCallback,
+                    mockConfig,
+                    mockSession,
+                    AuthorizationLevel.AUTH_LEVEL_READ_ONLY));
 		}});
 		command.setSCMCommandHandler(mockSCMCommandHandler);
 		command.runImpl();
@@ -135,7 +139,7 @@ public class SCMCommandTest extends MockTestCase {
 			will(returnValue(USERNAME));
 			one(mockPathToProjectConverter).convert("/proj-2");
 			will(returnValue(PROJECT));
-			one(mockProjectAuthorizer).userIsAuthorizedForProject(USERNAME, PROJECT);
+			one(mockProjectAuthorizer).userIsAuthorizedForProject(USERNAME, PROJECT, null);
 			will(returnValue(null));
 			one(mockExitCallback).onExit(1);
 		}});

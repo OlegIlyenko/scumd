@@ -33,6 +33,7 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
     public static final String USER_ELEM = "user";
     public static final String PASSWORD_ELEM = "password";
     public static final String PUBLIC_KEY_ELEM = "public-key";
+    public static final String EMAIL_ELEM = "email";
 
     public static final String NAME_ATTR = "name";
     public static final String EXPIRE_ATTR = "expire";
@@ -116,6 +117,10 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
     private User getUser(Element element, List<Group> availableGroups, Group defaultGroup) {
         User user = new User();
         user.setName(element.getAttribute(NAME_ATTR).trim());
+
+        if (StringUtils.hasText(element.getAttribute(EMAIL_ELEM))) {
+            user.setEmail(element.getAttribute(EMAIL_ELEM).trim());
+        }
 
         if (StringUtils.hasText(element.getAttribute(EXPIRE_ATTR))) {
             user.setExpirationDate(parseDate(element.getAttribute(EXPIRE_ATTR)));

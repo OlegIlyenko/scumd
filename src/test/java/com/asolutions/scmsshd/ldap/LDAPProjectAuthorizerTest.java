@@ -62,7 +62,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 															   "git",
 															   namingProvider,
 															   AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
-		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(usernameToCheck, "proj-2"));
+		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(usernameToCheck, "proj-2", null));
 	}
 	
 	@Test
@@ -106,7 +106,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 															   null,
 															   namingProvider,
 															   AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
-		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(usernameToCheck, "proj-2"));
+		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(usernameToCheck, "proj-2", null));
 	}
 	
 	@Test
@@ -145,7 +145,7 @@ public class LDAPProjectAuthorizerTest extends MockTestCase {
 															   "git",
 															   namingProvider,
 															   AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
-		assertNull(auth.userIsAuthorizedForProject(usernameToCheck, "proj-2"));
+		assertNull(auth.userIsAuthorizedForProject(usernameToCheck, "proj-2", null));
 	}
 	
     @Test

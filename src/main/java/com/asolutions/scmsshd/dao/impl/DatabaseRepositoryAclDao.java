@@ -109,7 +109,7 @@ public class DatabaseRepositoryAclDao extends BaseDatabaseDao implements Reposit
         private RepositoryAcl readRepo(ResultSet rs) throws SQLException {
             RepositoryAcl repositoryAcl = new RepositoryAcl();
 
-            repositoryAcl.setMatcher(new SimpleRepositoryMatcher(rs.getString("repoPath")));
+            repositoryAcl.setMatcher(new AntPathMatcher(rs.getString("repoPath")));
             repositoryAcl.setGroups(new ArrayList<PrivilegeOwner<Group>>());
             repositoryAcl.setUsers(new ArrayList<PrivilegeOwner<User>>());
 

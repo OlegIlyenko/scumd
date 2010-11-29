@@ -8,17 +8,17 @@ import java.util.List;
  */
 public class RepositoryAcl {
 
-    private RepositoryMatcher matcher;
+    private PathMatcher matcher;
 
     private List<PrivilegeOwner<User>> users = new ArrayList<PrivilegeOwner<User>>();
 
     private List<PrivilegeOwner<Group>> groups = new ArrayList<PrivilegeOwner<Group>>();
 
-    public RepositoryMatcher getMatcher() {
+    public PathMatcher getMatcher() {
         return matcher;
     }
 
-    public void setMatcher(RepositoryMatcher matcher) {
+    public void setMatcher(PathMatcher matcher) {
         this.matcher = matcher;
     }
 

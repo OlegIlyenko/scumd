@@ -43,7 +43,7 @@ public class SimpleRepositoryAclDao implements RepositoryAclDao {
             List<PrivilegeOwner<User>> users = new ArrayList<PrivilegeOwner<User>>();
             List<PrivilegeOwner<Group>> groups = new ArrayList<PrivilegeOwner<Group>>();
 
-            acl.setMatcher(new SimpleRepositoryMatcher(r.getPath()));
+            acl.setMatcher(new AntPathMatcher(r.getPath()));
             acl.setUsers(users);
             acl.setGroups(groups);
             acls.add(acl);

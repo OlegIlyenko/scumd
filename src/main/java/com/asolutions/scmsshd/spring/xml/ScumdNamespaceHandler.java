@@ -16,12 +16,16 @@ public class ScumdNamespaceHandler extends NamespaceHandlerSupport {
     public static final String FILE_USER_DAO_ACL_ELEM = "file-user-dao-acl";
     public static final String DATABASE_USER_DAO_ACL_ELEM = "database-user-dao-acl";
     public static final String DBCP_CONNECTION_POOL_ELEM = "dbcp-connection-pool";
+    public static final String LISTENERS_ELEM = "listeners";
+    public static final String EMAIL_SENDER_ELEM = "email-sender";
 
     public static final String DEFAULT_GIT_SSH_SERVER_ID = "git-ssh-server";
     public static final String DEFAULT_USER_DAO_ID = "user-dao";
     public static final String DEFAULT_ACL_ID = "repository-acl";
     public static final String DEFAULT_SERVER_KEY_PAIR_ID = "server-key-pair";
     public static final String DEFAULT_DAO_HOLDER_ID = "dao-holder";
+    public static final String GLOBAL_LISTENERES_HOLDER_ID = "global-listeneres-holder";
+    public static final String EMAIL_SENDER_ID = "email-sender";
 
     @Override
     public void init() {
@@ -37,5 +41,8 @@ public class ScumdNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser(DEFAULT_SERVER_KEY_PAIR_ELEM, new DefaultKeyPairBeanDefinitionParser());
         registerBeanDefinitionParser(FILE_SERVER_KEY_PAIR_ELEM, new FileKeyPairBeanDefinitionParser());
         registerBeanDefinitionParser(SIMPLE_SERVER_KEY_PAIR_ELEM, new SimpleKeyPairBeanDefinitionParser());
+
+        registerBeanDefinitionParser(LISTENERS_ELEM, new ListenersBeanDefinitionParser());
+        registerBeanDefinitionParser(EMAIL_SENDER_ELEM, new EmailSenderBeanDefinitionParser());
     }
 }

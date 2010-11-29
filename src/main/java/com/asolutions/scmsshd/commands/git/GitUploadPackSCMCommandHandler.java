@@ -1,9 +1,11 @@
 package com.asolutions.scmsshd.commands.git;
 
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.InteractionContext;
 import com.asolutions.scmsshd.commands.factories.GitSCMCommandFactory;
-import org.apache.sshd.server.ExitCallback;
+import com.asolutions.scmsshd.commands.handlers.CommandContext;
+import com.asolutions.scmsshd.event.CancelEventException;
+import com.asolutions.scmsshd.event.impl.PullEventImpl;
+import com.asolutions.scmsshd.event.listener.EventDispatcher;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.UploadPack;
 import org.slf4j.Logger;
@@ -11,9 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
+
+import static com.asolutions.scmsshd.event.listener.EventDispatcher.Stage.Post;
+import static com.asolutions.scmsshd.event.listener.EventDispatcher.Stage.Pre;
 
 public class GitUploadPackSCMCommandHandler extends GitSCMCommandImpl {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -32,21 +34,30 @@ public class GitUploadPackSCMCommandHandler extends GitSCMCommandImpl {
 	}
 
 	@Override
-	protected void runCommand(FilteredCommand filteredCommand,
-			InputStream inputStream, OutputStream outputStream,
-			OutputStream errorStream, ExitCallback exitCallback,
-			Properties config, AuthorizationLevel authorizationLevel)
-			throws IOException {
-		log.info("Starting Upload Pack Of: " + filteredCommand.getArgument());
-		
-		String strRepoBase = config.getProperty(GitSCMCommandFactory.REPOSITORY_BASE);
+	protected void runCommand(CommandContext commandContext) throws IOException {
+        InteractionContext ctx = commandContext.getInteractionContext();
+        EventDispatcher eventDispatcher = ctx.getEventDispatcher();
+
+        log.info("Starting Upload Pack Of: " + commandContext.getFilteredCommand().getArgument());
+
+        try {
+            eventDispatcher.fireEvent(Pre, new PullEventImpl(ctx.getUser(), ctx.getServer(), ctx.getRepositoryInfo()));
+        } catch (CancelEventException e) {
+            log.info("Pull request cancelled by listener: " + e.getContextInfo());
+            throw e;
+        }
+
+        String strRepoBase = commandContext.getConfiguration().getProperty(GitSCMCommandFactory.REPOSITORY_BASE);
 		File repoBase = new File(strRepoBase);
 		
-		Repository repo = repositoryProvider.provide(repoBase, filteredCommand.getArgument());
+		Repository repo = repositoryProvider.provide(repoBase, commandContext);
 		
 		UploadPack uploadPack = uploadPackProvider.provide(repo);
-		uploadPack.upload(inputStream, outputStream, errorStream);
-		log.info("Completing Upload Pack: " + filteredCommand.getArgument());
+
+		uploadPack.upload(commandContext.getInputStream(), commandContext.getOutputStream(), commandContext.getErrorStream());
+
+		log.info("Completing Upload Pack: " + commandContext.getFilteredCommand().getArgument());
+        eventDispatcher.fireEvent(Post, new PullEventImpl(ctx.getUser(), ctx.getServer(), ctx.getRepositoryInfo()));
 	}
 
 }

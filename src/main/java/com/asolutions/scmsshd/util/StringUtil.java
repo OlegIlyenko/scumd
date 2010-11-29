@@ -18,4 +18,14 @@ public abstract class StringUtil {
         return builder.toString().trim();
     }
 
+    public static String produce(String s, int n) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < n; i++) {
+            sb.append(s);
+        }
+
+        return sb.toString();
+    }
+
 }

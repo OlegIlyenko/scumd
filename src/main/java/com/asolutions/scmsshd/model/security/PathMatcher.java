@@ -3,7 +3,7 @@ package com.asolutions.scmsshd.model.security;
 /**
  * @author Oleg Ilyenko
  */
-public interface RepositoryMatcher {
+public interface PathMatcher {
 
     boolean matches(String repository);
 

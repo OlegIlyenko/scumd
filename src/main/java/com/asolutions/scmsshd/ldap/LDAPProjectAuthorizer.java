@@ -3,6 +3,7 @@ package com.asolutions.scmsshd.ldap;
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,10 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.InitialDirContext;
 
+/**
+ * @deprecated Should be implemented as dao
+ */
+@Deprecated
 public class LDAPProjectAuthorizer implements ProjectAuthorizer {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
 	private String lookupUserDN;
@@ -57,7 +62,7 @@ public class LDAPProjectAuthorizer implements ProjectAuthorizer {
 										   this.lookupUserPassword);
 	}
 
-	public AuthorizationLevel userIsAuthorizedForProject(String username, String group)
+	public AuthorizationLevel userIsAuthorizedForProject(String username, String group, ServerSession session)
 			throws UnparsableProjectException {
 		username = getUserDN(username);
 		group = getGroupDN(group);

@@ -10,12 +10,12 @@ import java.util.regex.Pattern;
  *
  * @author Oleg Ilyenko
  */
-public class SimpleRepositoryMatcher implements RepositoryMatcher {
+public class AntPathMatcher implements PathMatcher {
 
-    private final Pattern repositoryPattern;
+    private final Pattern pattern;
 
-    public SimpleRepositoryMatcher(String repositoryPatterns) {
-        this.repositoryPattern = createPattern(Arrays.asList(repositoryPatterns.split("\\s*,\\s*")));
+    public AntPathMatcher(String repositoryPatterns) {
+        this.pattern = createPattern(Arrays.asList(repositoryPatterns.split("\\s*,\\s*")));
     }
 
     private Pattern createPattern(List<String> stringPatterns) {
@@ -58,6 +58,6 @@ public class SimpleRepositoryMatcher implements RepositoryMatcher {
 
     @Override
     public boolean matches(String repository) {
-        return repositoryPattern.matcher(repository).matches();
+        return pattern.matcher(repository).matches();
     }
 }

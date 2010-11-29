@@ -3,8 +3,10 @@ package com.asolutions.scmsshd.commands.git;
 import com.asolutions.MockTestCase;
 import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
 import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.CommandContext;
 import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
 import org.apache.sshd.server.ExitCallback;
+import org.apache.sshd.server.session.ServerSession;
 import org.jmock.Expectations;
 import org.junit.Test;
 
@@ -23,15 +25,20 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final ExitCallback mockExitCallback = context.mock(ExitCallback.class);
 		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
 		final SCMCommandHandler mockFetchPackHandler = context.mock(SCMCommandHandler.class, "mockFetchPackHandler");
-		
-		final Properties mockProperties = context.mock(Properties.class);
-		
+        final ServerSession mockSession = context.mock(ServerSession.class);
+        final Properties mockProperties = context.mock(Properties.class);
+        final CommandContext commandContext = new CommandContext(
+                filteredCommand, mockInputStream, mockOutputStream,
+                mockErrorStream, mockExitCallback, mockProperties,
+                mockSession, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+
+
 		checking(new Expectations(){{
-			one(mockUploadPackHandler).execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+			one(mockUploadPackHandler).execute(commandContext);
 		}});
 		
 		GitSCMCommandHandler handler = new GitSCMCommandHandler(mockUploadPackHandler, mockFetchPackHandler);
-		handler.execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+		handler.execute(commandContext);
 	}
 	
 	@Test
@@ -43,15 +50,19 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final ExitCallback mockExitCallback = context.mock(ExitCallback.class);
 		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
 		final SCMCommandHandler mockFetchPackHandler = context.mock(SCMCommandHandler.class, "mockFetchPackHandler");
-		
+        final ServerSession mockSession = context.mock(ServerSession.class);
 		final Properties mockProperties = context.mock(Properties.class);
+        final CommandContext commandContext = new CommandContext(
+                filteredCommand, mockInputStream, mockOutputStream,
+                mockErrorStream, mockExitCallback, mockProperties,
+                mockSession, AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
 
 		checking(new Expectations(){{
-			one(mockUploadPackHandler).execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
+			one(mockUploadPackHandler).execute(commandContext);
 		}});
 		
 		GitSCMCommandHandler handler = new GitSCMCommandHandler(mockUploadPackHandler, mockFetchPackHandler);
-		handler.execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_ONLY);
+		handler.execute(commandContext);
 	}
 	
 	@Test
@@ -64,13 +75,18 @@ public class GitSCMCommandHandlerTest extends MockTestCase {
 		final SCMCommandHandler mockUploadPackHandler = context.mock(SCMCommandHandler.class, "mockUploadPackHandler");
 		final SCMCommandHandler mockReceivePackHandler = context.mock(SCMCommandHandler.class, "mockReceivePackHandler");
 		final Properties mockProperties = context.mock(Properties.class);
-		
+        final ServerSession mockSession = context.mock(ServerSession.class);
+		final CommandContext commandContext = new CommandContext(
+                filteredCommand, mockInputStream, mockOutputStream,
+                mockErrorStream, mockExitCallback, mockProperties,
+                mockSession, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+
 		checking(new Expectations(){{
-			one(mockReceivePackHandler).execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+			one(mockReceivePackHandler).execute(commandContext);
 		}});
 		
 		GitSCMCommandHandler handler = new GitSCMCommandHandler(mockUploadPackHandler, mockReceivePackHandler);
-		handler.execute(filteredCommand, mockInputStream, mockOutputStream, mockErrorStream, mockExitCallback, mockProperties, AuthorizationLevel.AUTH_LEVEL_READ_WRITE);
+		handler.execute(commandContext);
 	}
 	
 }

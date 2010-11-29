@@ -17,7 +17,7 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 
 	@Test
 	public void testAuthingWithEmptyChainFails() throws Exception {
-		assertNull(new PassIfAnyInCollectionPassAuthorizor().userIsAuthorizedForProject(USERNAME, PROJECT));
+		assertNull(new PassIfAnyInCollectionPassAuthorizor().userIsAuthorizedForProject(USERNAME, PROJECT, null));
 	}
 	
 	@Test
@@ -26,9 +26,9 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 		final ProjectAuthorizer passesAuth = context.mock(ProjectAuthorizer.class, "passesAuth");
 		
 		checking(new Expectations(){{
-			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT);
+			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT, null);
 			will(returnValue(null));
-			allowing(passesAuth).userIsAuthorizedForProject(USERNAME, PROJECT);
+			allowing(passesAuth).userIsAuthorizedForProject(USERNAME, PROJECT, null);
 			will(returnValue(AuthorizationLevel.AUTH_LEVEL_READ_ONLY));
 		}});
 		
@@ -38,7 +38,7 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 		authList.add(passesAuth);
 		authList.add(failsAuth);
 		auth.setProjectAuthorizers(authList);
-		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(USERNAME, PROJECT));
+		assertEquals(AuthorizationLevel.AUTH_LEVEL_READ_ONLY, auth.userIsAuthorizedForProject(USERNAME, PROJECT, null));
 	}
 	
 	@Test
@@ -46,7 +46,7 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 		final ProjectAuthorizer failsAuth = context.mock(ProjectAuthorizer.class, "failsAuth");
 		
 		checking(new Expectations(){{
-			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT);
+			allowing(failsAuth).userIsAuthorizedForProject(USERNAME, PROJECT, null);
 			will(returnValue(null));
 		}});
 		
@@ -55,7 +55,7 @@ public class PassIfAnyInCollectionPassAuthorizorTest extends MockTestCase {
 		authList.add(failsAuth);
 		authList.add(failsAuth);
 		auth.setProjectAuthorizers(authList);
-		assertNull(auth.userIsAuthorizedForProject(USERNAME, PROJECT));
+		assertNull(auth.userIsAuthorizedForProject(USERNAME, PROJECT, null));
 	}
 
 }

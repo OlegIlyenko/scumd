@@ -3,14 +3,19 @@ package com.asolutions.scmsshd.spring.xml;
 import com.asolutions.scmsshd.ConfigurableGitSshServer;
 import com.asolutions.scmsshd.dao.DaoHolder;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Oleg Ilyenko
@@ -23,6 +28,8 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
     public static final String ACL_REF_ATTR = "acl-ref";
     public static final String SERVER_KEY_PAIR_REF_ATTR = "server-key-pair-ref";
     public static final String USER_DAO_ACL_REF_ATTR = "user-dao-acl-ref";
+    public static final String MAX_FILES_PRO_EVENT_ATTR = "max-files-pro-event";
+    public static final String ALLOW_CACHING_ATTR = "allow-caching";
 
     @Override
     protected String resolveId(Element element, AbstractBeanDefinition definition, ParserContext parserContext) throws BeanDefinitionStoreException {
@@ -43,6 +50,14 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         builder.addPropertyValue("port", element.getAttribute(PORT_ATTR));
         builder.addPropertyValue("repositoriesDir", element.getAttribute(REPOSITORIES_BASE_ATTR));
 
+        if (StringUtils.hasText(element.getAttribute(MAX_FILES_PRO_EVENT_ATTR))) {
+            builder.addPropertyValue("filesProEventLimit", element.getAttribute(MAX_FILES_PRO_EVENT_ATTR));
+        }
+
+        if (StringUtils.hasText(element.getAttribute(ALLOW_CACHING_ATTR))) {
+            builder.addPropertyValue("allowCaching", element.getAttribute(ALLOW_CACHING_ATTR));
+        }
+
         processKeyPair(element, parserContext, builder);
 
         BeanDefinitionBuilder shadowDaoHolderBuilder = BeanDefinitionBuilder.genericBeanDefinition(DaoHolder.class);
@@ -54,6 +69,12 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         } else {
             builder.addPropertyValue("daoHolder", shadowDaoHolderBuilder.getBeanDefinition());
         }
+
+        List<BeanDefinition> listeners = new ManagedList<BeanDefinition>();
+        listeners.addAll(getOwnListeners(element, parserContext, builder));
+        builder.addPropertyValue("listeners", listeners);
+
+        setupGlobalListeners(element, parserContext, builder);
     }
 
     protected void processKeyPair(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -137,4 +158,48 @@ public class GitSshServerBeanDefinitionParser extends AbstractSingleBeanDefiniti
         return true;
     }
 
+    protected List<BeanDefinition> getOwnListeners(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        List<BeanDefinition> listeners = new ArrayList<BeanDefinition>();
+
+        for (Element e : DomUtils.getChildElementsByTagName(element, ScumdNamespaceHandler.LISTENERS_ELEM)) {
+            BeanDefinition b = parserContext.getDelegate().parseCustomElement(e, builder.getRawBeanDefinition());
+            List<BeanDefinition> l = (List<BeanDefinition>) b.getPropertyValues().getPropertyValue("object").getValue();
+
+            if (l != null && !l.isEmpty()) {
+                listeners.addAll(l);
+            }
+        }
+
+        return listeners;
+    }
+
+    protected void setupGlobalListeners(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+        builder.addPropertyReference("globalListeners", ScumdNamespaceHandler.GLOBAL_LISTENERES_HOLDER_ID);
+
+        try {
+            parserContext.getRegistry().getBeanDefinition(ScumdNamespaceHandler.GLOBAL_LISTENERES_HOLDER_ID);
+        } catch (NoSuchBeanDefinitionException e) {
+            List<List<BeanDefinition>> registry = new ManagedList<List<BeanDefinition>>();
+            BeanDefinitionBuilder b = BeanDefinitionBuilder.genericBeanDefinition(ObjectHolder.class);
+
+            b.addPropertyValue("object", registry);
+            parserContext.getRegistry().registerBeanDefinition(
+                ScumdNamespaceHandler.GLOBAL_LISTENERES_HOLDER_ID, b.getRawBeanDefinition());
+        }
+//        try {
+//            BeanDefinition registryHolder = parserContext.getRegistry().getBeanDefinition(ScumdNamespaceHandler.GLOBAL_LISTENERES_HOLDER_ID);
+//            List<List<BeanDefinition>> registry = (List<List<BeanDefinition>>) registryHolder.getPropertyValues().getPropertyValue("object").getValue();
+//            List<BeanDefinition> result = new ArrayList<BeanDefinition>();
+//
+//            for (List<BeanDefinition> definitionList : registry) {
+//                if (definitionList != null && definitionList.size() > 0) {
+//                    result.addAll(definitionList);
+//                }
+//            }
+//
+//            return result;
+//        } catch (Exception e) {
+//            return Collections.emptyList();
+//        }
+    }
 }

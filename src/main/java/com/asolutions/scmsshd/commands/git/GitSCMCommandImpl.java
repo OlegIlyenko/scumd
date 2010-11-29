@@ -1,16 +1,11 @@
 package com.asolutions.scmsshd.commands.git;
 
-import com.asolutions.scmsshd.authorizors.AuthorizationLevel;
-import com.asolutions.scmsshd.commands.FilteredCommand;
+import com.asolutions.scmsshd.commands.handlers.CommandContext;
 import com.asolutions.scmsshd.commands.handlers.SCMCommandHandler;
-import org.apache.sshd.server.ExitCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
 
 public abstract class GitSCMCommandImpl implements SCMCommandHandler {
 	protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -19,39 +14,33 @@ public abstract class GitSCMCommandImpl implements SCMCommandHandler {
 		super();
 	}
 
-	public void execute(FilteredCommand filteredCommand,
-			InputStream inputStream, OutputStream outputStream,
-			OutputStream errorStream, ExitCallback exitCallback,
-			Properties config, AuthorizationLevel authorizationLevel) {
+	public void execute(CommandContext commandContext) {
 		try {
 			try {
-				runCommand(filteredCommand, inputStream, outputStream,
-						errorStream, exitCallback, config, authorizationLevel);
+				runCommand(commandContext);
 			} catch (IOException e) {
-				log.error("Error Executing " + filteredCommand, e);
+				log.error("Error Executing " + commandContext.getFilteredCommand(), e);
 			}
-			log.info("command completed normally");
+
+            log.info("command completed normally");
 		} finally {
 			try {
-				outputStream.flush();
+				commandContext.getOutputStream().flush();
 			} catch (IOException err) {
-				log.error("Error Executing " + filteredCommand, err);
+				log.error("Error Executing " + commandContext.getFilteredCommand(), err);
 			}
-			try {
-				errorStream.flush();
+
+            try {
+				commandContext.getErrorStream().flush();
 			} catch (IOException err) {
-				log.error("Error Executing " + filteredCommand, err);
+				log.error("Error Executing " + commandContext.getFilteredCommand(), err);
 			}
-			exitCallback.onExit(0);
+
+            commandContext.getExitCallback().onExit(0);
 		}
 
 	}
 
-	protected abstract void runCommand(FilteredCommand filteredCommand,
-									   InputStream inputStream, OutputStream outputStream,
-			                           OutputStream errorStream, 
-			                           ExitCallback exitCallback, 
-			                           Properties config, 
-			                           AuthorizationLevel authorizationLevel) throws IOException;
+	protected abstract void runCommand(CommandContext commandContext) throws IOException;
 
 }
