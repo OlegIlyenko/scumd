@@ -2,6 +2,7 @@ package com.asolutions.scmsshd.model.security;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Oleg Ilyenko
@@ -13,6 +14,8 @@ public class RawRepositoryAcl {
     private Map<Privilege, List<String>> userPrivileges;
 
     private Map<Privilege, List<String>> groupPrivileges;
+
+    private Set<Privilege> publicPrivileges;
 
     public String getPath() {
         return path;
@@ -36,5 +39,13 @@ public class RawRepositoryAcl {
 
     public void setGroupPrivileges(Map<Privilege, List<String>> groupPrivileges) {
         this.groupPrivileges = groupPrivileges;
+    }
+
+    public Set<Privilege> getPublicPrivileges() {
+        return publicPrivileges;
+    }
+
+    public void setPublicPrivileges(Set<Privilege> publicPrivileges) {
+        this.publicPrivileges = publicPrivileges;
     }
 }

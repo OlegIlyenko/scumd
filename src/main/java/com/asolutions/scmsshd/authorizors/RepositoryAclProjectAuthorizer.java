@@ -3,7 +3,6 @@ package com.asolutions.scmsshd.authorizors;
 import com.asolutions.scmsshd.InteractionContext;
 import com.asolutions.scmsshd.InteractionContextKey;
 import com.asolutions.scmsshd.commands.git.GitSCMRepositoryProvider;
-import com.asolutions.scmsshd.dao.UserDao;
 import com.asolutions.scmsshd.event.CancelEventException;
 import com.asolutions.scmsshd.event.impl.AuthorizationEventImpl;
 import com.asolutions.scmsshd.event.impl.AuthorizationFailEventImpl;
@@ -38,8 +37,6 @@ public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
 
     private String repositoriesDir;
 
-    private UserDao userDao;
-
     public RepositoryAclService getAclService() {
         return aclService;
     }
@@ -64,20 +61,13 @@ public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
         this.repositoriesDir = repositoriesDir;
     }
 
-    public UserDao getUserDao() {
-        return userDao;
-    }
-
-    public void setUserDao(UserDao userDao) {
-        this.userDao = userDao;
-    }
-
     @Override
     public AuthorizationLevel userIsAuthorizedForProject(String userName, String project, ServerSession session)
             throws UnparsableProjectException {
         InteractionContext context = session.getAttribute(InteractionContextKey.get());
         EventDispatcher eventDispatcher = context.getEventDispatcher();
-        User user = userDao.getUserByName(userName);
+        User user = context.getUser();
+
         Set<Privilege> available = aclService.getAvailablePrivileges(project, user);
         boolean repositoryExists = repositoryProvider.exists(new File(repositoriesDir), project, context);
         RepositoryInfo info = new RepositoryInfo(null, project, repositoryExists);

@@ -29,6 +29,11 @@
             <outputDirectory>/docs</outputDirectory>
             <destName>scumd-config-example.xml</destName>
         </file>
+        <file>
+            <source>${basedir}/src/main/resources/com/asolutions/scmsshd/spring/xml/scumd-0.1.0.xsd</source>
+            <outputDirectory>/docs</outputDirectory>
+            <destName>scumd-0.1.0.xsd</destName>
+        </file>
     </files>
     
 

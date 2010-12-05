@@ -25,6 +25,7 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
     public static final String REPOSITORY_ELEM = "repository";
     public static final String USERS_ELEM = "users";
     public static final String GROUPS_ELEM = "groups";
+    public static final String PUBLIC_ELEM = "public";
 
     public static final String PATH_ATTR = "path";
     public static final String ALLOW_ATTR = "allow";
@@ -76,6 +77,12 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
         RawRepositoryAcl acl = new RawRepositoryAcl();
         acl.setPath(element.getAttribute(PATH_ATTR).trim());
 
+        Set<Privilege> publicPrivileges = new HashSet<Privilege>();
+
+        for (Element publicElem : DomUtils.getChildElementsByTagName(element, PUBLIC_ELEM)) {
+            processPublicAcl(publicElem, publicPrivileges);
+        }
+
         Map<Privilege, List<String>> users = new HashMap<Privilege, List<String>>();
 
         for (Element userElem : DomUtils.getChildElementsByTagName(element, USERS_ELEM)) {
@@ -90,6 +97,7 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
 
         acl.setUserPrivileges(users);
         acl.setGroupPrivileges(groups);
+        acl.setPublicPrivileges(publicPrivileges);
 
         return acl;
     }
@@ -108,6 +116,12 @@ public class AclBeanDefinitionParser extends AbstractSingleBeanDefinitionParser 
                     allowed.add(a);
                 }
             }
+        }
+    }
+
+    private void processPublicAcl(Element element, Set<Privilege> entity) {
+        for (Privilege p : getPrivileges(element)) {
+            entity.add(p);
         }
     }
 

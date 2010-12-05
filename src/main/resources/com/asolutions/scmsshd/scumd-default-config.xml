@@ -309,6 +309,17 @@
             <groups allow="ReadOnly" list="public" />
         </repository>
         -->
+
+        <!--
+            You can also make repositories public at all 3 levels.
+            ASll anonymous and normal users automatically will receive
+            this privilege for the repository.
+        -->
+        <!--
+        <repository path="public/*.git">
+            <public allow="ReadWrite" />
+        </repository>
+        -->
     </acl>
 
     <!-- User DAO. At the moment only simple implementation available. It can be defined like this (or, of course, within git server tag). -->
@@ -338,10 +349,11 @@
         </group>
 
         <group name="developers">
-            <!-- You can also user public key auth for some users -->
+            <!-- You can also user public key auth for some users (more than one public key is allowed) -->
             <!--
             <user name="user4">
                 <public-key file="/path/to/the/id_rsa.pub" />
+                <public-key file="/path/to/the/other/id_rsa.pub" />
             </user>
             -->
 
@@ -363,6 +375,14 @@
         </user>
         -->
 
+        <!--
+            User can be also defined with no-auth="true".
+            In this case user is not required any authentication,
+             but user is still target for authorization.
+        -->
+        <!--
+        <user name="guest" no-auth="true" />
+        -->
     </simple-user-dao>
 
     <!-- You can also load server key pair from file -->

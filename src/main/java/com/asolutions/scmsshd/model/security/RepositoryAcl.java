@@ -2,6 +2,7 @@ package com.asolutions.scmsshd.model.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oleg Ilyenko
@@ -13,6 +14,8 @@ public class RepositoryAcl {
     private List<PrivilegeOwner<User>> users = new ArrayList<PrivilegeOwner<User>>();
 
     private List<PrivilegeOwner<Group>> groups = new ArrayList<PrivilegeOwner<Group>>();
+
+    private Set<Privilege> publicPrivileges;
 
     public PathMatcher getMatcher() {
         return matcher;
@@ -38,4 +41,11 @@ public class RepositoryAcl {
         this.groups = groups;
     }
 
+    public Set<Privilege> getPublicPrivileges() {
+        return publicPrivileges;
+    }
+
+    public void setPublicPrivileges(Set<Privilege> publicPrivileges) {
+        this.publicPrivileges = publicPrivileges;
+    }
 }

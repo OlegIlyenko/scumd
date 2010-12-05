@@ -37,6 +37,7 @@ public class DatabaseRepositoryAclDao extends BaseDatabaseDao implements Reposit
         execute(sqlSource.getProperty("table.repository.create"));
         execute(sqlSource.getProperty("table.userAcl.create"));
         execute(sqlSource.getProperty("table.groupAcl.create"));
+        execute(sqlSource.getProperty("table.publicAcl.create"));
     }
 
     @Override
@@ -85,6 +86,8 @@ public class DatabaseRepositoryAclDao extends BaseDatabaseDao implements Reposit
                 addUser(repositoryAcl, rs);
             } else if (type.equals("group")) {
                 addGroup(repositoryAcl, rs);
+            } else if (type.equals("public")) {
+                addPublic(repositoryAcl, rs);
             }
         }
 
@@ -106,12 +109,18 @@ public class DatabaseRepositoryAclDao extends BaseDatabaseDao implements Reposit
             repositoryAcl.getUsers().add(privilegeOwner);
         }
 
+        private void addPublic(RepositoryAcl repositoryAcl, ResultSet rs) throws SQLException {
+            Privilege privilege = Privilege.valueOf(rs.getString("privilege"));
+            repositoryAcl.getPublicPrivileges().add(privilege);
+        }
+
         private RepositoryAcl readRepo(ResultSet rs) throws SQLException {
             RepositoryAcl repositoryAcl = new RepositoryAcl();
 
             repositoryAcl.setMatcher(new AntPathMatcher(rs.getString("repoPath")));
             repositoryAcl.setGroups(new ArrayList<PrivilegeOwner<Group>>());
             repositoryAcl.setUsers(new ArrayList<PrivilegeOwner<User>>());
+            repositoryAcl.setPublicPrivileges(new HashSet<Privilege>());
 
             return repositoryAcl;
         }

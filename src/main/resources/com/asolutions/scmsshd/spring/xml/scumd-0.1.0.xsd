@@ -124,15 +124,15 @@
     <xsd:complexType name="User">
         <xsd:complexContent>
             <xsd:extension base="beans:identifiedType">
-                <xsd:choice minOccurs="0">
-                    <xsd:element name="password">
+                <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                    <xsd:element name="password" minOccurs="0" maxOccurs="1">
                         <xsd:complexType>
                             <xsd:attribute name="password" type="xsd:string" use="required"/>
                             <xsd:attribute name="checksum" type="PasswordChecksum" default="none"/>
                         </xsd:complexType>
                     </xsd:element>
 
-                    <xsd:element name="public-key">
+                    <xsd:element name="public-key" minOccurs="0" maxOccurs="unbounded">
                         <xsd:complexType mixed="true">
                             <xsd:attribute name="file" type="xsd:string" use="optional"/>
                         </xsd:complexType>
@@ -144,6 +144,11 @@
                 <xsd:attribute name="active" type="xsd:boolean" default="true"/>
                 <xsd:attribute name="groups" type="xsd:string"/>
                 <xsd:attribute name="email" type="xsd:string"/>
+                <xsd:attribute name="no-auth" type="xsd:boolean">
+                    <xsd:annotation>
+                        <xsd:documentation>User allowed to to have no auth policy - so he can access the system without password or public key</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -162,12 +167,21 @@
         <xsd:choice minOccurs="1" maxOccurs="unbounded">
             <xsd:element name="users" type="RepositoryIdentityAcl"/>
             <xsd:element name="groups" type="RepositoryIdentityAcl"/>
+            <xsd:element name="public" type="RepositoryPublicAcl"/>
         </xsd:choice>
 
         <xsd:attribute name="path" type="xsd:string" use="required">
             <xsd:annotation>
                 <xsd:documentation>Repository path pattern list. Patterns is similar to the ANT path. You can use * and ** wildcards.
                 </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="RepositoryPublicAcl" mixed="true">
+        <xsd:attribute name="allow">
+            <xsd:annotation>
+                <xsd:documentation>List of permissions. Can be: ReadWrite, ReadOnly, Create</xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
     </xsd:complexType>

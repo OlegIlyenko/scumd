@@ -3,10 +3,9 @@ package com.asolutions.scmsshd.authenticators;
 import com.asolutions.scmsshd.InteractionContext;
 import com.asolutions.scmsshd.InteractionContextKey;
 import com.asolutions.scmsshd.dao.UserDao;
-import com.asolutions.scmsshd.event.CancelEventException;
-import com.asolutions.scmsshd.event.impl.AuthenticationEventImpl;
 import com.asolutions.scmsshd.event.impl.AuthenticationFailEventImpl;
-import com.asolutions.scmsshd.event.impl.AuthenticationSuccessEventImpl;
+import com.asolutions.scmsshd.model.security.Anonymous;
+import com.asolutions.scmsshd.model.security.NoAuth;
 import com.asolutions.scmsshd.model.security.PasswordAuthPolicy;
 import com.asolutions.scmsshd.model.security.User;
 import com.asolutions.scmsshd.util.CryptoUtil;
@@ -16,15 +15,13 @@ import org.apache.sshd.server.session.ServerSession;
 
 import java.net.SocketAddress;
 
-import static com.asolutions.scmsshd.event.listener.EventDispatcher.Stage.Pre;
-
 /**
  * @author Oleg Ilyenko
  */
 public class UserDaoPasswordAuthenticator extends BaseUserDaoAuthenticator implements PasswordAuthenticator {
 
-    public UserDaoPasswordAuthenticator(UserDao userDao, Function<InteractionContext> contextProvider) {
-        super(userDao, contextProvider);
+    public UserDaoPasswordAuthenticator(UserDao userDao, Function<InteractionContext> contextProvider, boolean allowAnonymous) {
+        super(userDao, contextProvider, allowAnonymous);
     }
 
     @Override
@@ -33,19 +30,18 @@ public class UserDaoPasswordAuthenticator extends BaseUserDaoAuthenticator imple
         InteractionContext ctx = getContextProvider().apply();
         SocketAddress address = session.getIoSession().getRemoteAddress();
 
-        try {
-            ctx.getEventDispatcher().fireEvent(Pre, new AuthenticationEventImpl(user, ctx.getServer(), userName, address, "password"));
-        } catch (CancelEventException e) {
-            log.info("Authentication was cancelled by listener: " + e.getContextInfo());
-            return false;
-        }
+        if (firePreAuth(userName, user, ctx, address, "password")) return false;
 
         String authError = checkUser(user, userName);
 
         if (authError != null) {
-            log.warn(authError);
-            ctx.getEventDispatcher().fireEvent(new AuthenticationFailEventImpl(user, ctx.getServer(), userName, address, "password", authError));
-            return false;
+            if (user == null && isAllowAnonymous()) {
+                user = new Anonymous();
+            } else {
+                log.warn(authError);
+                ctx.getEventDispatcher().fireEvent(new AuthenticationFailEventImpl(user, ctx.getServer(), userName, address, "password", authError));
+                return false;
+            }
         }
 
         if (user.getAuthPolicy() instanceof PasswordAuthPolicy) {
@@ -58,24 +54,16 @@ public class UserDaoPasswordAuthenticator extends BaseUserDaoAuthenticator imple
 
             boolean success = policy.getPassword().equals(passwordChecksum);
 
-            if (log.isDebugEnabled()) {
-                if (success) {
-                    log.debug("User '" + userName + "' was successfully authenticated with password");
-                    ctx.getEventDispatcher().fireEvent(new AuthenticationSuccessEventImpl(user, ctx.getServer(), userName, address, "password"));
-                } else {
-                    authError = "User '" + userName + "' failed authentication with password!";
-                    log.warn(authError);
-                    ctx.getEventDispatcher().fireEvent(new AuthenticationFailEventImpl(user, ctx.getServer(), userName, address, "password", authError));
-                }
-            }
+            processAuthResult(userName, user, ctx, address, success, "password");
 
             ctx.setUser(user);
-
             session.setAttribute(InteractionContextKey.get(), ctx);
 
             return success;
+        } else if (user.getAuthPolicy() instanceof NoAuth) {
+            return processNoAuth(userName, user, ctx, address, session);
         } else {
-            return false; /* In this case public key strategy would be used */
+            return false;
         }
     }
 }

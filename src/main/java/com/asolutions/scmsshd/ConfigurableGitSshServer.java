@@ -218,8 +218,8 @@ public class ConfigurableGitSshServer implements InitializingBean, DisposableBea
             }
         };
 
-        sshd.setPasswordAuthenticator(new UserDaoPasswordAuthenticator(userDao, contextProvider));
-        sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao, contextProvider));
+        sshd.setPasswordAuthenticator(new UserDaoPasswordAuthenticator(userDao, contextProvider, true));
+        sshd.setPublickeyAuthenticator(new UserDaoPublickeyAuthenticator(userDao, contextProvider, true));
     }
 
     private void setCommandFactory(SshServer sshd, GitSCMRepositoryProvider repositoryProvider) throws NamingException {
@@ -239,7 +239,6 @@ public class ConfigurableGitSshServer implements InitializingBean, DisposableBea
         RepositoryAclProjectAuthorizer authorizer = new RepositoryAclProjectAuthorizer();
         authorizer.setRepositoriesDir(repositoriesDir);
         authorizer.setRepositoryProvider(repositoryProvider);
-        authorizer.setUserDao(userDao);
         authorizer.setAclService(repositoryAclService);
 
         commandFactory.setProjectAuthorizor(authorizer);

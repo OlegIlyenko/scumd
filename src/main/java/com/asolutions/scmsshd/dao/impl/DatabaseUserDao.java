@@ -1,10 +1,7 @@
 package com.asolutions.scmsshd.dao.impl;
 
 import com.asolutions.scmsshd.dao.UserDao;
-import com.asolutions.scmsshd.model.security.Group;
-import com.asolutions.scmsshd.model.security.PasswordAuthPolicy;
-import com.asolutions.scmsshd.model.security.PublicKeyAuthPolicy;
-import com.asolutions.scmsshd.model.security.User;
+import com.asolutions.scmsshd.model.security.*;
 import com.asolutions.scmsshd.util.StringUtil;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
@@ -29,6 +26,7 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
         execute(sqlSource.getProperty("table.users.create"));
         execute(sqlSource.getProperty("table.groups.create"));
         execute(sqlSource.getProperty("table.userGroups.create"));
+        execute(sqlSource.getProperty("table.publicKeys.create"));
     }
 
     @Override
@@ -88,6 +86,7 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
             }
 
             processGroup(rs, user);
+            processPublicKey(rs, user);
 
             users.put(name, user);
         }
@@ -108,6 +107,25 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
             }
         }
 
+        private void processPublicKey(ResultSet rs, User user) throws SQLException {
+            String publicKey = rs.getString("publicKey");
+            if (StringUtil.hasText(publicKey)) {
+                AuthPolicy ap = user.getAuthPolicy();
+
+                if (ap == null) {
+                    PublicKeyAuthPolicy policy = new PublicKeyAuthPolicy();
+                    policy.setPublicKeyAsStrings(new ArrayList<String>());
+                    user.setAuthPolicy(policy);
+                    ap = policy;
+                } else if (!(ap instanceof PublicKeyAuthPolicy)) {
+                    throw new IllegalStateException("You should have either password or public key or no-auth auth policy for user " + user.getName());
+                }
+
+
+                ((PublicKeyAuthPolicy) ap).getPublicKeyAsStrings().add(publicKey);
+            }
+        }
+
         private User readUser(ResultSet rs) throws SQLException {
             User user = new User();
 
@@ -116,8 +134,21 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
             user.setActive(Boolean.valueOf(rs.getString("active")));
             user.setExpirationDate(rs.getDate("expire"));
 
+            String noAuth = rs.getString("no_auth");
+            if (StringUtil.hasText(noAuth) && Boolean.parseBoolean(noAuth)) {
+                if (user.getAuthPolicy() != null) {
+                    throw new IllegalStateException("You should have either password or public key or no-auth auth policy for user " + user.getName());
+                }
+
+                user.setAuthPolicy(NoAuth.get());
+            }
+
             String password = rs.getString("password");
             if (StringUtil.hasText(password)) {
+                if (user.getAuthPolicy() != null) {
+                    throw new IllegalStateException("You should have either password or public key or no-auth auth policy for user " + user.getName());
+                }
+
                 PasswordAuthPolicy policy = new PasswordAuthPolicy();
                 policy.setPassword(password);
 
@@ -126,10 +157,6 @@ public class DatabaseUserDao extends BaseDatabaseDao implements UserDao {
                     policy.setEncodingAlgorithm(PasswordAuthPolicy.EncodingAlgorithm.valueOf(hashAlg));
                 }
 
-                user.setAuthPolicy(policy);
-            } else {
-                PublicKeyAuthPolicy policy = new PublicKeyAuthPolicy();
-                policy.setPublicKeyAsString(rs.getString("public_key"));
                 user.setAuthPolicy(policy);
             }
 

@@ -11,7 +11,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.util.StringUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
@@ -23,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.hasText;
 
 /**
  * @author Oleg Ilyenko
@@ -42,6 +43,7 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
     public static final String PASSWORD_ATTR = "password";
     public static final String CHECKSUM_ATTR = "checksum";
     public static final String FILE_ATTR = "file";
+    public static final String NO_AUTH_ATTR = "no-auth";
 
     public static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -51,7 +53,7 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
             return null;
         }
 
-        return StringUtils.hasText(element.getAttribute("id")) ? element.getAttribute("id") : ScumdNamespaceHandler.DEFAULT_USER_DAO_ID;
+        return hasText(element.getAttribute("id")) ? element.getAttribute("id") : ScumdNamespaceHandler.DEFAULT_USER_DAO_ID;
     }
 
     @Override
@@ -77,7 +79,7 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
     }
 
     private void registerInDaoHolder(ParserContext parserContext, Element element, BeanDefinition beanDefinition) {
-        if (!parserContext.isNested() && !StringUtils.hasText(element.getAttribute("id"))) {
+        if (!parserContext.isNested() && !hasText(element.getAttribute("id"))) {
             BeanDefinition daoHolder = null;
 
             try {
@@ -118,15 +120,15 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
         User user = new User();
         user.setName(element.getAttribute(NAME_ATTR).trim());
 
-        if (StringUtils.hasText(element.getAttribute(EMAIL_ELEM))) {
+        if (hasText(element.getAttribute(EMAIL_ELEM))) {
             user.setEmail(element.getAttribute(EMAIL_ELEM).trim());
         }
 
-        if (StringUtils.hasText(element.getAttribute(EXPIRE_ATTR))) {
+        if (hasText(element.getAttribute(EXPIRE_ATTR))) {
             user.setExpirationDate(parseDate(element.getAttribute(EXPIRE_ATTR)));
         }
 
-        if (StringUtils.hasText(element.getAttribute(ACTIVE_ATTR))) {
+        if (hasText(element.getAttribute(ACTIVE_ATTR))) {
             user.setActive(Boolean.valueOf(element.getAttribute(ACTIVE_ATTR)));
         }
 
@@ -135,7 +137,7 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
             userGroups.add(defaultGroup);
         }
 
-        if (StringUtils.hasText(element.getAttribute(GROUPS_ATTR))) {
+        if (hasText(element.getAttribute(GROUPS_ATTR))) {
             for (String g : element.getAttribute(GROUPS_ATTR).split("\\s*,\\s*")) {
                 if (findGroupByName(userGroups, g) == null) {
                     Group availableGroup = findGroupByName(availableGroups, g);
@@ -151,6 +153,15 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
         user.setGroups(userGroups);
 
         AuthPolicy policy = getAuthPolicy(element);
+
+        if (hasText(element.getAttribute(NO_AUTH_ATTR)) && Boolean.parseBoolean(element.getAttribute(NO_AUTH_ATTR))) {
+            if (policy == null) {
+                policy = NoAuth.get();
+            } else {
+                throw new IllegalStateException("You have set " + NO_AUTH_ATTR + " attribute together with other auth policy for user " + user.getName());
+            }
+
+        }
 
         if (policy == null) {
             throw new IllegalStateException("No auth policy found for user: " + user.getName());
@@ -168,28 +179,30 @@ public class SimpleUserDaoBeanDefinitionParser extends AbstractSingleBeanDefinit
             PasswordAuthPolicy policy = new PasswordAuthPolicy();
             policy.setPassword(passwordElem.getAttribute(PASSWORD_ATTR).trim());
 
-            if (StringUtils.hasText(passwordElem.getAttribute(CHECKSUM_ATTR))) {
+            if (hasText(passwordElem.getAttribute(CHECKSUM_ATTR))) {
                 policy.setEncodingAlgorithm(PasswordAuthPolicy.EncodingAlgorithm.valueOf(passwordElem.getAttribute(CHECKSUM_ATTR)));
             }
 
             return policy;
         }
 
-        Element publicKeyElem = DomUtils.getChildElementByTagName(userElem, PUBLIC_KEY_ELEM);
+        List<String> publicKeys = new ArrayList<String>();
 
-        if (publicKeyElem != null) {
-            PublicKeyAuthPolicy policy = new PublicKeyAuthPolicy();
-
-            if (StringUtils.hasText(publicKeyElem.getAttribute(FILE_ATTR))) {
-                policy.setPublicKeyAsString(readFile(publicKeyElem.getAttribute(FILE_ATTR)));
+        for (Element publicKeyElem : DomUtils.getChildElementsByTagName(userElem, PUBLIC_KEY_ELEM)) {
+            if (hasText(publicKeyElem.getAttribute(FILE_ATTR))) {
+                publicKeys.add(readFile(publicKeyElem.getAttribute(FILE_ATTR)));
             } else {
-                policy.setPublicKeyAsString(StringUtil.cleanString(DomUtils.getTextValue(publicKeyElem)));
+                publicKeys.add(StringUtil.cleanString(DomUtils.getTextValue(publicKeyElem)));
             }
+        }
 
+        if (publicKeys.size() > 0) {
+            PublicKeyAuthPolicy policy = new PublicKeyAuthPolicy();
+            policy.setPublicKeyAsStrings(publicKeys);
             return policy;
         }
 
-        if (StringUtils.hasText(userElem.getAttribute(PASSWORD_ATTR))) {
+        if (hasText(userElem.getAttribute(PASSWORD_ATTR))) {
             PasswordAuthPolicy policy = new PasswordAuthPolicy();
             policy.setPassword(userElem.getAttribute(PASSWORD_ATTR).trim());
             return policy;

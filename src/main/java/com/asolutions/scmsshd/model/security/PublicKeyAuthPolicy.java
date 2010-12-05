@@ -3,29 +3,45 @@ package com.asolutions.scmsshd.model.security;
 import com.asolutions.scmsshd.util.CryptoUtil;
 
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Oleg Ilyenko
  */
 public class PublicKeyAuthPolicy implements AuthPolicy {
 
-    private PublicKey publicKey;
+    private List<PublicKey> publicKeys;
 
-    private String publicKeyString;
+    private List<String> publicKeyStrings;
 
-    public PublicKey getPublicKey() {
-        if (publicKey == null && publicKeyString != null) {
-            publicKey = CryptoUtil.readPublicKey(publicKeyString);
+    public List<PublicKey> getPublicKeys() {
+        if ((publicKeys == null || publicKeys.size() == 0) && publicKeyStrings != null) {
+            publicKeys = readKeys(publicKeyStrings);
         }
         
-        return publicKey;
+        return publicKeys;
     }
 
-    public void setPublicKey(PublicKey publicKey) {
-        this.publicKey = publicKey;
+    private List<PublicKey> readKeys(List<String> stringKeys) {
+        List<PublicKey> keys = new ArrayList<PublicKey>();
+
+        for (String stringKey : stringKeys) {
+            keys.add(CryptoUtil.readPublicKey(stringKey));
+        }
+
+        return keys;
     }
 
-    public void setPublicKeyAsString(String publicKeyString) {
-        this.publicKeyString = publicKeyString;
+    public void setPublicKeys(List<PublicKey> publicKeys) {
+        this.publicKeys = publicKeys;
+    }
+
+    public void setPublicKeyAsStrings(List<String> publicKeyStrings) {
+        this.publicKeyStrings = publicKeyStrings;
+    }
+
+    public List<String> getPublicKeyAsStrings() {
+        return  this.publicKeyStrings;
     }
 }

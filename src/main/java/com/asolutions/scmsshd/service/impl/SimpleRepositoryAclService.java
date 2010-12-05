@@ -45,6 +45,8 @@ public class SimpleRepositoryAclService implements RepositoryAclService {
             }
         }
 
+        available.addAll(acl.getPublicPrivileges());
+
         return available;
     }
 
