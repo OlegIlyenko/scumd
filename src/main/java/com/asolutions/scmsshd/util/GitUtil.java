@@ -74,7 +74,10 @@ public class GitUtil {
                 result.add(Tuple.valueOf(commitFn.apply(cc, filesResult, moreFiles), filesResult));
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+			// Quick hack/fix 
+			// FIXME: make good fix!
+			e.printStackTrace();
+            //throw new RuntimeException(e);
         }
 
         return result;
