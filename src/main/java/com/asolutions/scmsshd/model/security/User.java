@@ -71,6 +71,6 @@ public class User {
 
     @Override
     public String toString() {
-        return name + (email != null ? " <" + email + ">" : "");
+        return getName() + (getEmail() != null ? " <" + getEmail() + ">" : "");
     }
 }

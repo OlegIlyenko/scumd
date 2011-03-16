@@ -141,7 +141,7 @@ public class EmailSender implements InitializingBean, DisposableBean {
         props.setProperty("mail." + protocol + ".host", host);
 
         if (port != null) {
-            props.setProperty("mail." + protocol + ".host", port.toString());
+            props.setProperty("mail." + protocol + ".port", port.toString());
         }
 
         props.setProperty("mail." + protocol + ".auth", "" + withAuth);

@@ -28,6 +28,10 @@ public class GitUtil {
             Function3<RevCommit, List<F>, Integer, C> commitFn, Function1<String, F> fileFn) {
         List<Tuple<C, List<F>>> result = new ArrayList<Tuple<C, List<F>>>();
 
+        if (c.getType() == ReceiveCommand.Type.CREATE || c.getType() == ReceiveCommand.Type.DELETE) {
+            return result; // this is create or delete tag - not a commit
+        }
+
         RevWalk w = new RevWalk(rp.getRepository());
 
         RevCommit newCommit = w.lookupCommit(c.getNewId());
@@ -74,10 +78,7 @@ public class GitUtil {
                 result.add(Tuple.valueOf(commitFn.apply(cc, filesResult, moreFiles), filesResult));
             }
         } catch (IOException e) {
-			// Quick hack/fix 
-			// FIXME: make good fix!
-			e.printStackTrace();
-            //throw new RuntimeException(e);
+            throw new RuntimeException(e);
         }
 
         return result;
@@ -93,38 +94,56 @@ public class GitUtil {
     }
 
     public static String render(PushEvent event) {
-        StringBuilder text = new StringBuilder("Push by user '");
-
-        text.append(event.getUser()).append("' to repository '")
-                .append(event.getRepositoryInfo().getRepositoryPath()).append("'\n\n");
+        StringBuilder text = new StringBuilder(getPushTitle(event)).append("\n\n");
 
         for (CommitEvent c : event.getCommits()) {
-            text.append(render(c)).append("\n");
+            text.append(render(c, false)).append("\n");
         }
 
         return text.toString();
     }
 
-    public static String render(CommitEvent c) {
-        StringBuilder text = new StringBuilder();
+    private static String getPushTitle(PushEvent e) {
+        switch (e.getType()) {
+            case Create:
+                return "User '" + e.getUser() + "' created ref '" + (e.getRefName() != null ? e.getRefName() : "") +
+                        "' in repository '" + e.getRepositoryInfo().getRepositoryPath() + "'";
+            case Delete:
+                return "User '" + e.getUser() + "' deleted ref '" + (e.getRefName() != null ? e.getRefName() : "") +
+                        "' in repository '" + e.getRepositoryInfo().getRepositoryPath() + "'";
+            case Update:
+                return "Push by user '" + e.getUser() + "' to repository '" + e.getRepositoryInfo().getRepositoryPath() +
+                        "'" + (e.getRefName() != null ? " @" + e.getRefName() : "");
+            default:
+                throw new IllegalArgumentException("Unsupported type: " + e.getType());
+        }
+    }
 
+    public static String render(CommitEvent c) {
+        return render(c, true);
+    }
+
+    public static String render(CommitEvent c, boolean showRef) {
+        StringBuilder text = new StringBuilder();
+        String prefix = produce(" ", 8);
         String title = "Commit: " + c.getRevCommit().getId().getName() +
-                " by " + render(c.getRevCommit().getAuthorIdent());
+                " by " + render(c.getRevCommit().getAuthorIdent()) +
+                (c.getRefName() != null && showRef ? " (" + c.getRefName() + ")" : "");
 
         text.append(title).append("\n");
 
         if (c.getRevCommit().getFullMessage() != null) {
-            text.append(c.getRevCommit().getFullMessage().trim()).append("\n");
+            text.append(prefix).append(c.getRevCommit().getFullMessage().replaceAll("([\r\n]+)", "$1" + prefix).trim()).append("\n");
         }
 
-        text.append(produce("=", title.length())).append("\n");
+        text.append(prefix).append(produce("=", title.length() - 8)).append("\n");
 
         for (FileChangeEvent f : c.getFileChanges()) {
-            text.append(f.getPath()).append("\n");
+            text.append(prefix).append(f.getPath()).append("\n");
         }
 
         if (c.getHasMoreFiles() > 0) {
-            text.append("...... (").append(c.getHasMoreFiles()).append(" more files)\n");
+            text.append(prefix).append("...... (").append(c.getHasMoreFiles()).append(" more files)\n");
         }
 
         return text.toString();
@@ -163,4 +182,21 @@ public class GitUtil {
         return e.getUser() + " pulled changes from repository " + e.getRepositoryInfo().getRepositoryPath();
     }
 
+    public static String renderUserName(String userName) {
+        return userName == null ? "anonymous" : userName;
+    }
+
+    public static RefEvent.Type convert(ReceiveCommand.Type type) {
+        switch (type) {
+            case UPDATE:
+            case UPDATE_NONFASTFORWARD:
+                return RefEvent.Type.Update;
+            case CREATE:
+                return RefEvent.Type.Create;
+            case DELETE:
+                return RefEvent.Type.Delete;
+            default:
+                throw new IllegalArgumentException("Unsupported Receive Command type");
+        }
+    }
 }

@@ -70,7 +70,7 @@ public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
 
             rp.setPreReceiveHook(new PreReceiveHook() {
                 public void onPreReceive(final ReceivePack rp, Collection<ReceiveCommand> commands) {
-                    for (ReceiveCommand command : commands) {
+                    for (final ReceiveCommand command : commands) {
                         try {
                             List<Tuple<CommitEvent, List<FileChangeEvent>>> res = GitUtil.traversePush(
                                 rp, command, commandContext.getInteractionContext().getFilesProEventLimit(),
@@ -78,7 +78,7 @@ public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
                                 new Function3<RevCommit, List<FileChangeEvent>, Integer, CommitEvent>() {
                                     public CommitEvent apply(RevCommit c, List<FileChangeEvent> files, Integer truncated) {
                                         CommitEvent e = new CommitEventImpl(ctx.getUser(), ctx.getServer(), ctx.getRepositoryInfo(),
-                                                c, rp, files, truncated);
+                                                c, rp, files, truncated, command);
                                         ctx.getEventDispatcher().fireEvent(Pre, e);
                                         return e;
                                     }
@@ -87,7 +87,8 @@ public class GitReceivePackSCMCommandHandler extends GitSCMCommandImpl {
                                 new Function1<String, FileChangeEvent>() {
                                     public FileChangeEvent apply(String path) {
                                         FileChangeEvent e =
-                                                new FileChangeEventImpl(ctx.getUser(), ctx.getServer(), ctx.getRepositoryInfo(), path);
+                                                new FileChangeEventImpl(ctx.getUser(), ctx.getServer(), ctx.getRepositoryInfo(),
+                                                        path, command);
                                         ctx.getEventDispatcher().fireEvent(Pre, e);
                                         return e;
                                     }

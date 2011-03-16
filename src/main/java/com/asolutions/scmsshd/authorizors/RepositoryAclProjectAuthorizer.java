@@ -14,6 +14,7 @@ import com.asolutions.scmsshd.model.security.User;
 import com.asolutions.scmsshd.service.RepositoryAclService;
 import com.asolutions.scmsshd.sshd.ProjectAuthorizer;
 import com.asolutions.scmsshd.sshd.UnparsableProjectException;
+import com.asolutions.scmsshd.util.GitUtil;
 import org.apache.sshd.server.session.ServerSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +74,7 @@ public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
         RepositoryInfo info = new RepositoryInfo(null, project, repositoryExists);
         SocketAddress address = session.getIoSession().getRemoteAddress();
 
-        log.debug("User '" + userName + "' made attempt to access" +
+        log.debug("User '" + GitUtil.renderUserName(userName) + "' made attempt to access" +
                 (repositoryExists ? "" : " non-existing") + " repository '" + project +
                 "'. He has following privileges for it: " + available);
 
@@ -88,7 +89,7 @@ public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
             eventDispatcher.fireEvent(new AuthorizationSuccessEventImpl(user, context.getServer(), info, available, address, AuthorizationLevel.AUTH_LEVEL_READ_WRITE));
             return AuthorizationLevel.AUTH_LEVEL_READ_WRITE;
         } else if (!repositoryExists) {
-            String reason = "User '" + userName + "' made attempt to create new repository '" + project + "' but he does not have Create privilege!";
+            String reason = "User '" + GitUtil.renderUserName(userName) + "' made attempt to create new repository '" + project + "' but he does not have Create privilege!";
             log.warn(reason);
             eventDispatcher.fireEvent(new AuthorizationFailEventImpl(user, context.getServer(), info, available, address, reason));
             return null;
@@ -101,7 +102,7 @@ public class RepositoryAclProjectAuthorizer implements ProjectAuthorizer {
             eventDispatcher.fireEvent(new AuthorizationSuccessEventImpl(user, context.getServer(), info, available, address, AuthorizationLevel.AUTH_LEVEL_READ_ONLY));
             return AuthorizationLevel.AUTH_LEVEL_READ_ONLY;
         } else {
-            String reason = "User '" + userName + "' made attempt to access repository '" + project + "' but he does not have rights for it!";
+            String reason = "User '" + GitUtil.renderUserName(userName) + "' made attempt to access repository '" + project + "' but he does not have rights for it!";
             log.warn(reason);
             eventDispatcher.fireEvent(new AuthorizationFailEventImpl(user, context.getServer(), info, available, address, reason));
             return null;

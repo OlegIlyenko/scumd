@@ -95,11 +95,31 @@ public class EmailListener {
     }
 
     public void on(PushEvent e) {
-        sendEmail(getUserDao(e), e.getUser().getName() + " pushed changes to repository " + e.getRepositoryInfo().getRepositoryPath(), GitUtil.render(e));
+        sendEmail(getUserDao(e), e.getUser().getName() + getPushDescription(e), GitUtil.render(e));
+    }
+
+    private String getPushDescription(PushEvent e) {
+        switch (e.getType()) {
+            case Create:
+                return " created ref " + (e.getRefName() != null ? e.getRefName() : "") +
+                        " in repository " + e.getRepositoryInfo().getRepositoryPath();
+            case Delete:
+                return " deleted ref " + (e.getRefName() != null ? e.getRefName() : "") +
+                        " in repository " + e.getRepositoryInfo().getRepositoryPath();
+            case Update:
+                return " pushed changes to repository " + e.getRepositoryInfo().getRepositoryPath() +
+                        (e.getRefName() != null ? " @" + e.getRefName() : "");
+            default:
+                throw new IllegalArgumentException("Unsupported type: " + e.getType());
+        }
     }
 
     public void on(CommitEvent e) {
-        sendEmail(getUserDao(e), e.getUser().getName() + " pushed commit to repository " + e.getRepositoryInfo().getRepositoryPath(), GitUtil.render(e));
+        sendEmail(getUserDao(e),
+                e.getUser().getName() +
+                        " pushed commit to repository " + e.getRepositoryInfo().getRepositoryPath() +
+                        (e.getRefName() != null ? " @" + e.getRefName() : ""),
+                GitUtil.render(e));
     }
 
     private void sendEmail(UserDao userDao, String defaultSubject, String body) {

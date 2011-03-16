@@ -279,7 +279,7 @@
     <email-sender host="my.host" port="465" protocol="smtps"
                   auth="true" user="mailsUser" password="secret"
                   from="git@admin.com" replay-to="git@admin.com"
-                  force-email="oi.is.test@gmail.com" disable="true" />
+                  force-email="test@gmail.com" disable="true" />
     -->
 
     <!--
